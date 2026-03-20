@@ -7,20 +7,28 @@ public class Main {
     private static final int SEMILLA = 2533;
     private static List<Solucion> soluciones;
 
+    private static int dimension;
+    private static int capacidadTotal;
+    private static int[] demandas;
+    private static int[][] tiempos;
+
     public static void main(String[] args) {
         soluciones = new ArrayList<>();
 
         Input input = Input.getInstancia();
         input.cargarDatos("input.txt");
 
+        dimension = input.getDimension();
+        capacidadTotal = input.getCapacidad();
+        demandas = input.getDemandas();
+        tiempos = input.getTiempos();
+
         input.mostrarDatosCargados();
 
-        int dimension = input.getDimension();
-
-        List<Integer> permutacionInicial = generarPermutacionAleatoria(dimension);
+        List<Integer> permutacionInicial = generarPermutacionAleatoria();
         System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
 
-        evaluarPermutacion(permutacionInicial, input);
+        evaluarPermutacion(permutacionInicial);
         System.out.println(soluciones);
 
         List<Integer> permutacionNueva = intercambio2opt(permutacionInicial, 2, 3);
@@ -28,14 +36,13 @@ public class Main {
         System.out.println(permutacionNueva);
 
         // Algoritmo 2-opt
-        int tiempoMinimo = soluciones.get(0).getTiempo();
 
 
     }
     /*
      * Generar una permutacion aleatoria con una semilla
      */
-    public static List<Integer> generarPermutacionAleatoria(int dimension) {
+    public static List<Integer> generarPermutacionAleatoria() {
         List<Integer> permutacion = new ArrayList<>();
 
         for (int i = 1; i < dimension; i++) {
@@ -51,13 +58,8 @@ public class Main {
     /*
      * Evaluar una permutacion y conseguir el tiempo que se tarda con su ruta. Se añade a la lista de soluciones
      */
-    public static void evaluarPermutacion(List<Integer> permutacionAEvaluar, Input input) {
+    public static void evaluarPermutacion(List<Integer> permutacionAEvaluar) {
         int tiempoTotal = 0;
-        // int capacidadTotal = input.getCapacidad();
-        int capacidadTotal = 15;
-        int dimension = input.getDimension();
-        int[] demandas = input.getDemandas();
-        int[][] tiempos = input.getTiempos();
 
         ArrayList<ArrayList<Integer>> ruta = new ArrayList<>();
         ruta.add(new ArrayList<>());
@@ -113,5 +115,6 @@ public class Main {
 
         return permutacionCambiada;
     }
+
 
 }
