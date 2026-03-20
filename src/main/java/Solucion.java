@@ -11,11 +11,7 @@ public class Solucion {
 
     @Override
     public String toString() {
-        return "Tiempo: " + tiempo + " // ruta: " + rutas.toString();
-    }
-
-    public ArrayList<ArrayList<Integer>> getRutas() {
-        return rutas;
+        return "Tiempo: " + tiempo + " // ruta: " + rutas.toString() + "\n";
     }
 
     public int getTiempo() {

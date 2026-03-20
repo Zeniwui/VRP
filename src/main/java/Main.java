@@ -31,12 +31,10 @@ public class Main {
         evaluarPermutacion(permutacionInicial);
         System.out.println(soluciones);
 
-        List<Integer> permutacionNueva = intercambio2opt(permutacionInicial, 2, 3);
-        System.out.println(permutacionInicial);
-        System.out.println(permutacionNueva);
-
         // Algoritmo 2-opt
-
+        Solucion solucionOptimaLocal = algoritmo2opt(permutacionInicial);
+        System.out.println("Lista de posibles soluciones: \n" + soluciones);
+        System.out.println("Solucion optima local: \n" + solucionOptimaLocal);
 
     }
     /*
@@ -115,6 +113,46 @@ public class Main {
 
         return permutacionCambiada;
     }
+    /*
+     * Utiliza el algoritmo 2-opt para encontrar el optimo local
+     * PROBLEMAS:
+     * - Verifica permutaciones que ya fueron probadas anteriormente (en la primera iteracion)
+     */
+    public static Solucion algoritmo2opt (List<Integer> permutacionInicial) {
+        int numeroNodos = dimension - 1;
+        int mejorTiempo = soluciones.get(0).getTiempo();
+        int nuevoTiempo;
+        boolean hayMejora = true;
+        List<Integer> permutacionAnterior = new ArrayList<>(permutacionInicial);
+        List<Integer> permutacionNueva;
+        boolean romperBucle1;
+        int indiceMejorTiempo = 0;
+        int contador = 0;
 
+        while (hayMejora) {
+            hayMejora = false;
+            for (int i = 0; i <= numeroNodos - 2; i++) {
+                romperBucle1 = false;
+                for (int j = i + 1; j <= numeroNodos - 1; j++) {
+                    permutacionNueva = intercambio2opt(permutacionAnterior, i, j);
+                    evaluarPermutacion(permutacionNueva);
+                    contador++;
+                    nuevoTiempo = soluciones.get(soluciones.size()-1).getTiempo();
+                    if (nuevoTiempo < mejorTiempo) {
+                        indiceMejorTiempo = contador;
+                        permutacionAnterior = permutacionNueva;
+                        mejorTiempo = nuevoTiempo;
+                        hayMejora = true;
+                        romperBucle1 = true;
+                        break;
+                    }
+                }
+                if (romperBucle1) {
+                    break;
+                }
+            }
+        }
+        return soluciones.get(indiceMejorTiempo);
+    }
 
 }
