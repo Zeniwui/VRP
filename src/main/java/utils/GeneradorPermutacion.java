@@ -13,6 +13,11 @@ public class GeneradorPermutacion {
         this.dimension = dimension;
         this.semilla = semilla;
     }
+
+    /**
+     * Generar una permutacion aleatoria con una semilla
+     * @return
+     */
     public List<Integer> aleatoria() {
         List<Integer> permutacion = new ArrayList<>();
 

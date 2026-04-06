@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 
 public class Solucion {
@@ -17,4 +19,5 @@ public class Solucion {
     public int getTiempo() {
         return tiempo;
     }
+    public ArrayList<ArrayList<Integer>> getRuta() { return rutas; }
 }
