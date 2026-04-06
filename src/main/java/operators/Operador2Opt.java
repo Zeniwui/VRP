@@ -30,7 +30,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
         List<Integer> segmentoActual, segmentoCambiado;
         int numeroCortes = solucionInicial.getRuta().size();  //Numero de segmentos que tiene la rutaInicial de la que partimos
         int mejorTiempoInicial = solucionInicial.getTiempo();
-        int tiempoSegmento, tiempoSegmentoCambiado;
+        int tiempoSegmento, tiempoSegmentoCambiado,  tiempoMejor;
         int indiceMejorTiempo = 0;
         int contador = -1;
         boolean hayMejora;
@@ -45,11 +45,12 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
             // Guardo en una variable auxiliar el tiempo que se tarda si quitamos el segmento actual con el que vamos a trabajar
             // Utilizamos evaluacion delta para agilizar las operaciones y no tener que evaluar toda una ruta completa para conseguir el tiempo
             int tiempoAux = mejorTiempoInicial - tiempoSegmento;
+            tiempoMejor = tiempoSegmento;
             hayMejora = true;
             while (hayMejora) {
                 hayMejora = false;
                 for (int i = 0; i <= segmentoActual.size() - 2; i++) {
-                    for (int j = i + 1; j <= segmentoActual.size() - 1; j++) {
+                    for (int j = i + 2; j <= segmentoActual.size() - 1; j++) {
                         // Aplicamos el intercambio 2-opt
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
                         // Calculamos el nuevo tiempo del segmento intercambiado
@@ -62,12 +63,13 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                         rutaInicialCopia.set(corte, (ArrayList<Integer>) segmentoCambiado);
                         // Añado al historial la nueva solucion con su tiempo
                         historial.add(new Solucion(rutaInicialCopia, tiempoAux + tiempoSegmentoCambiado));
-                        // Como añadimos algo al historial el contador (del indice) suma +1
+                        // Como añadimos algo al historial, el contador (del indice) suma +1
                         contador++;
 
                         // Si el tiempo del segmento cambiado es mejor que el inicial, debemos guardarlo como posible solucion
-                        if (tiempoSegmentoCambiado < tiempoSegmento) {
+                        if (tiempoSegmentoCambiado < tiempoMejor) {
                             hayMejora = true;
+                            tiempoMejor = tiempoSegmentoCambiado;
                             // Guardo el indice de la mejor solucion que hay en el historial para despues devolverlo
                             indiceMejorTiempo = contador;
                         }

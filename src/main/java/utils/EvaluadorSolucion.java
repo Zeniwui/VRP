@@ -72,9 +72,10 @@ public class EvaluadorSolucion {
     public int evaluarTiempoSegmento(List<Integer> segmento) {
         int tiempoTotal = 0;
         tiempoTotal += tiempos[0][segmento.get(0)];
-        for (int i = 1; i < segmento.size() - 1; i++) {
+        for (int i = 0; i < segmento.size() - 1; i++) {
             tiempoTotal += tiempos[segmento.get(i)][segmento.get(i+1)];
         }
+        tiempoTotal += tiempos[segmento.get(segmento.size()-1)][0];
         return tiempoTotal;
     }
 }
