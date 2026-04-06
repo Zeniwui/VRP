@@ -19,12 +19,12 @@ public class EvaluadorSolucion {
     }
 
     /**
-     * Evalua una permutacion de acuerdo a cuanto tiempo tarda en recorrerla
-     * Ademas hace cortes a la permutacion indicando que se debe volver al origen
+     * Evalua una permutacion completa haciendo los cortes necesarios indicando que se debe volver al nodo
+     * origen. Ademas calcula tambien el tiempo
      * @param permutacion Lista de enteros correspondientes al orden que debe seguir la ruta
-     * @return Solucion compuesta por la permutacion cortada y el tiempo total que tarda en hacer esa permutacion
+     * @return Solucion compuesta por la permutacion cortada y el tiempo total que tarda en hacer esa ruta
      */
-    public Solucion evaluar(List<Integer> permutacion) {
+    public Solucion evaluarCompleto(List<Integer> permutacion) {
         int tiempoSolucion = 0;
 
         ArrayList<ArrayList<Integer>> rutaSolucion = new ArrayList<>();
@@ -67,5 +67,14 @@ public class EvaluadorSolucion {
             i++;
         }
         return new Solucion(rutaSolucion, tiempoSolucion);
+    }
+
+    public int evaluarTiempoSegmento(List<Integer> segmento) {
+        int tiempoTotal = 0;
+        tiempoTotal += tiempos[0][segmento.get(0)];
+        for (int i = 1; i < segmento.size() - 1; i++) {
+            tiempoTotal += tiempos[segmento.get(i)][segmento.get(i+1)];
+        }
+        return tiempoTotal;
     }
 }
