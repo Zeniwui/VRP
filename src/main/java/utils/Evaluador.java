@@ -28,7 +28,7 @@ public class Evaluador {
     public Solucion evaluarCompleto(List<Integer> permutacion) {
         int tiempoSolucion = 0;
 
-        ArrayList<ArrayList<Integer>> rutaSolucion = new ArrayList<>();
+        List<List<Integer>> rutaSolucion = new ArrayList<>();
         rutaSolucion.add(new ArrayList<>());
 
         int cajasRestantes = capacidad;

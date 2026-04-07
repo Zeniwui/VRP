@@ -1,10 +1,9 @@
 import model.Input;
 import model.Solucion;
 import operators.Operador2Opt;
-import utils.EvaluadorSolucion;
+import utils.Evaluador;
 import utils.GeneradorPermutacion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -22,12 +21,7 @@ public class Main {
         System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
 
         // Evaluamos la permutacion aleatoria generada
-        EvaluadorSolucion evaluadorSoluciones = new EvaluadorSolucion(
-                input.getDimension(),
-                input.getCapacidad(),
-                input.getDemandas(),
-                input.getTiempos()
-        );
+        Evaluador evaluadorSoluciones = new Evaluador(input);
         Solucion solucionInicial = evaluadorSoluciones.evaluarCompleto(permutacionInicial);
         System.out.println("Solucion de la permutacion aleatoria inicial: " + solucionInicial);
 

@@ -3,15 +3,15 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.EvaluadorSolucion;
+import utils.Evaluador;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Operador2Opt implements OperadorLocalIntraRuta{
-    private EvaluadorSolucion evaluador;
+    private Evaluador evaluador;
     private List<Solucion> historial;
-    public Operador2Opt(EvaluadorSolucion evaluador) {
+    public Operador2Opt(Evaluador evaluador) {
         this.evaluador = evaluador;
         historial = new ArrayList<>();
     }
@@ -70,7 +70,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
 
                         // Añadimos esta solucion al historial
                         // Hago una copia de la ruta de la solucion inicial
-                        ArrayList<ArrayList<Integer>> rutaInicialCopia = new ArrayList<ArrayList<Integer>>(solucionInicial.getRuta());
+                        List<List<Integer>> rutaInicialCopia = new ArrayList<List<Integer>>(solucionInicial.getRuta());
                         // En la copia, cambio el segmento actual con el que trabajamos por el que intercambiamos
                         rutaInicialCopia.set(corte, (ArrayList<Integer>) segmentoCambiado);
                         // Añado al historial la nueva solucion con su tiempo
@@ -91,7 +91,6 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                 // Y debemos entonces generar los vecinos de esta nueva solucion
                 // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorTiempo
                 segmentoActual = historial.get(indiceMejorTiempo).getRuta().get(corte);
-                System.out.println("Despues de generar todos los vecinos, el mejor es: " + segmentoActual);
             }
         }
         return historial.get(indiceMejorTiempo);
