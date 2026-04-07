@@ -1,21 +1,22 @@
 package utils;
 
+import model.Input;
 import model.Solucion;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EvaluadorSolucion {
+public class Evaluador {
     private int dimension;
     private int capacidad;
     private int[] demandas;
     private int[][] tiempos;
 
-    public EvaluadorSolucion(int dimension, int capacidad, int[] demandas, int[][] tiempos) {
-        this.dimension = dimension;
-        this.capacidad = capacidad;
-        this.demandas = demandas;
-        this.tiempos = tiempos;
+    public Evaluador(Input input) {
+        this.dimension = input.getDimension();
+        this.capacidad = input.getCapacidad();
+        this.demandas = input.getDemandas();
+        this.tiempos = input.getTiempos();
     }
 
     /**
@@ -72,6 +73,11 @@ public class EvaluadorSolucion {
         return new Solucion(rutaSolucion, tiempoSolucion);
     }
 
+    /**
+     * Obtiene el tiempo que se tarda en recorrer el segmento que se le da por parametro
+     * @param segmento
+     * @return
+     */
     public int evaluarTiempoSegmento(List<Integer> segmento) {
         int tiempoTotal = 0;
         tiempoTotal += tiempos[0][segmento.get(0)];
@@ -80,5 +86,21 @@ public class EvaluadorSolucion {
         }
         tiempoTotal += tiempos[segmento.get(segmento.size()-1)][0];
         return tiempoTotal;
+    }
+
+    /**
+     * Indica si el vehiculo tiene suficiente capacidad para cubrir las demandas del segmento dato por parametro
+     * @param segmento
+     * @return
+     */
+    public boolean suficienteCapacidadParaCubrirSegmento (List<Integer> segmento) {
+        int capacidadRestante = capacidad;
+        for (int i = 0; i < dimension - 1; i++) {
+            capacidadRestante -= demandas[i];
+            if (capacidadRestante < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
