@@ -1,12 +1,13 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Solucion {
-    private ArrayList<ArrayList<Integer>> rutas;
+    private List<List<Integer>> rutas;
     private int tiempo;
 
-    public Solucion(ArrayList<ArrayList<Integer>> r, int t) {
+    public Solucion(List<List<Integer>> r, int t) {
         rutas = r;
         tiempo = t;
     }
@@ -19,5 +20,5 @@ public class Solucion {
     public int getTiempo() {
         return tiempo;
     }
-    public ArrayList<ArrayList<Integer>> getRuta() { return rutas; }
+    public List<List<Integer>> getRuta() { return rutas; }
 }
