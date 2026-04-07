@@ -18,13 +18,21 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
     @Override
     public List<Integer> aplicarCambio(List<Integer> segmento, int v1, int v2) {
         List<Integer> nuevoSegmento = new ArrayList<>(segmento);
-        for (int i = v1 + 1, j = v2; i < j; i++, j--){
+        for (int i = v1, j = v2; i < j; i++, j--){
             int aux = nuevoSegmento.get(i);
             nuevoSegmento.set(i, nuevoSegmento.get(j));
             nuevoSegmento.set(j, aux);
         }
         return nuevoSegmento;
     }
+
+    /**
+     * Funcion que dada una solucion inicial (de la forma [[1, 2, 3], [4, 5, 6]], itera por todas los segmentos del array.
+     * Para cada segmento, se generan todos sus vecinos y se escoge de entre ellos, el de mejor resultado.
+     * Se vuelve a repetir el proceso hasta no encontrar vecinos que mejoren el resultado que ya teníamos.
+     * @param solucionInicial
+     * @return La Solucion que da el mejor resultado, el minimo local.
+     */
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
         Input input = Input.getInstancia();
         List<Integer> segmentoActual, segmentoCambiado;
@@ -36,7 +44,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
         boolean hayMejora;
 
         // Como la ruta inicial puede tener varios cortes (Ej: [[1, 2, 3], [4, 5, 6]]
-        // debemos aplicar el operador an cada segmento
+        // debemos aplicar el operador en cada segmento
         for (int corte = 0; corte < numeroCortes; corte++) {
             // Guardamos el segmento actual con el que estamos trabajando
             segmentoActual = solucionInicial.getRuta().get(corte);
@@ -47,10 +55,14 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
             int tiempoAux = mejorTiempoInicial - tiempoSegmento;
             tiempoMejor = tiempoSegmento;
             hayMejora = true;
+
+            // Bucle para encontrar el mínimo local
             while (hayMejora) {
                 hayMejora = false;
+
+                //Bucle para encontrar todos los vecinos de un segmento inicial
                 for (int i = 0; i <= segmentoActual.size() - 2; i++) {
-                    for (int j = i + 2; j <= segmentoActual.size() - 1; j++) {
+                    for (int j = i + 1; j <= segmentoActual.size() - 1; j++) {
                         // Aplicamos el intercambio 2-opt
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
                         // Calculamos el nuevo tiempo del segmento intercambiado
@@ -75,6 +87,11 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                         }
                     }
                 }
+                // Una vez hemos encontrado todos los vecinos del segmento inicial, nos tenemos que quedar con el de mejor resultado
+                // Y debemos entonces generar los vecinos de esta nueva solucion
+                // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorTiempo
+                segmentoActual = historial.get(indiceMejorTiempo).getRuta().get(corte);
+                System.out.println("Despues de generar todos los vecinos, el mejor es: " + segmentoActual);
             }
         }
         return historial.get(indiceMejorTiempo);
