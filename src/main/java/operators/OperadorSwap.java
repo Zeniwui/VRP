@@ -29,7 +29,7 @@ public class OperadorSwap {
         segmentosCambiado.get(0).set(v1, segmentos.get(1).get(v2));
         segmentosCambiado.get(1).set(v2, segmentos.get(0).get(v1));
 
-        System.out.println(segmentosCambiado);
+        //System.out.println(segmentosCambiado);
 
         for (int i = 0; i < segmentosCambiado.size(); i++) {
             if (!evaluador.suficienteCapacidadParaCubrirSegmento(segmentosCambiado.get(i))) {
@@ -88,9 +88,13 @@ public class OperadorSwap {
 
                                 // Si el nuevo tiempo es mejor que el que teniamos, tenemos que guardar la solucion
                                 if (tiempoNuevoTotal < tiempoMejor) {
+                                    // Hemos encontrado una mejora
                                     hayMejora = true;
+                                    // Actualizamos el mejor tiempo
                                     tiempoMejor = tiempoNuevoTotal;
+                                    // Antes que poner la ruta en la solucion la actualizamos por si hubo cambios anteriores
                                     solucionMejor.copiarRuta(rutaActual);
+                                    // En la solucion mejor introducimos los segmentos cambiados que nos proporcionaron mejor resultado
                                     solucionMejor.setSegmento(i, segmentosCambiados.get(0));
                                     solucionMejor.setSegmento(j, segmentosCambiados.get(1));
                                     solucionMejor.setTiempo(tiempoNuevoTotal);

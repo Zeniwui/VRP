@@ -68,7 +68,7 @@ public class Evaluador {
             i++;
         }
         // Acabo de recorrer toda la ruta y me falta volver al origen
-        tiempoSolucion += tiempos[i-1][0];
+        tiempoSolucion += tiempos[nodoDondeEstoy][0];
 
         return new Solucion(rutaSolucion, tiempoSolucion);
     }
@@ -102,12 +102,15 @@ public class Evaluador {
      */
     public boolean suficienteCapacidadParaCubrirSegmento (List<Integer> segmento) {
         int capacidadRestante = capacidad;
-        for (int i = 0; i < dimension - 1; i++) {
-            capacidadRestante -= demandas[i];
+
+        for (Integer nodo: segmento) {
+            capacidadRestante -= demandas[nodo];
+
             if (capacidadRestante < 0) {
                 return false;
             }
         }
+
         return true;
     }
 }

@@ -5,6 +5,8 @@ import operators.OperadorSwap;
 import utils.Evaluador;
 import utils.GeneradorPermutacion;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -20,6 +22,9 @@ public class Main {
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), SEMILLA);
         List<Integer> permutacionInicial = generadorPermutaciones.aleatoria();
         System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
+
+        // Ejemplo de cómo inicializarla en tu código de prueba:
+
 
         // Evaluamos la permutacion aleatoria generada
         Evaluador evaluadorSoluciones = new Evaluador(input);
