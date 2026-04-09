@@ -73,6 +73,13 @@ public class Evaluador {
         return new Solucion(rutaSolucion, tiempoSolucion);
     }
 
+    public int evaluarTiempoCompleto(List<List<Integer>> ruta) {
+        int tiempoTotal = 0;
+        for (List<Integer> segmento: ruta) {
+            tiempoTotal += evaluarTiempoSegmento(segmento);
+        }
+        return tiempoTotal;
+    }
     /**
      * Obtiene el tiempo que se tarda en recorrer el segmento que se le da por parametro
      * @param segmento
