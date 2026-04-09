@@ -23,9 +23,6 @@ public class Main {
         List<Integer> permutacionInicial = generadorPermutaciones.aleatoria();
         System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
 
-        // Ejemplo de cómo inicializarla en tu código de prueba:
-
-
         // Evaluamos la permutacion aleatoria generada
         Evaluador evaluadorSoluciones = new Evaluador(input);
         Solucion solucionInicial = evaluadorSoluciones.evaluarCompleto(permutacionInicial);
