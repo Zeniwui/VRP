@@ -60,6 +60,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
             while (hayMejora) {
                 hayMejora = false;
 
+                System.out.println("--- Generando vecinos ---");
                 //Bucle para encontrar todos los vecinos de un segmento inicial
                 for (int i = 0; i <= segmentoActual.size() - 2; i++) {
                     for (int j = i + 1; j <= segmentoActual.size() - 1; j++) {
@@ -77,6 +78,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                         historial.add(new Solucion(rutaInicialCopia, tiempoAux + tiempoSegmentoCambiado));
                         // Como añadimos algo al historial, el contador (del indice) suma +1
                         contador++;
+                        System.out.println(historial.get(contador));
 
                         // Si el tiempo del segmento cambiado es mejor que el inicial, debemos guardarlo como posible solucion
                         if (tiempoSegmentoCambiado < tiempoMejor) {
@@ -87,10 +89,12 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                         }
                     }
                 }
+                System.out.println("--- Todos los vecinos generados ---");
                 // Una vez hemos encontrado todos los vecinos del segmento inicial, nos tenemos que quedar con el de mejor resultado
                 // Y debemos entonces generar los vecinos de esta nueva solucion
                 // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorTiempo
                 segmentoActual = historial.get(indiceMejorTiempo).getRuta().get(corte);
+                System.out.println("Mejor vecino: " + segmentoActual);
             }
         }
         return historial.get(indiceMejorTiempo);
