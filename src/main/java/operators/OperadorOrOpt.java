@@ -64,6 +64,7 @@ public class OperadorOrOpt {
             while (hayMejora) {
                 hayMejora = false;
 
+                System.out.println("--- Generando vecinos ---");
                 // En cada segmento, aplicamos el cambio
                 for (int i = 0; i < segmentoActual.size() - 1; i++) {
                     for (int j = 0; j < segmentoActual.size(); j++) {

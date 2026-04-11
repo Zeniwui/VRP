@@ -11,6 +11,7 @@ import java.util.List;
 public class Operador2Opt implements OperadorLocalIntraRuta{
     private Evaluador evaluador;
     private List<Solucion> historial;
+    private Input input;
     public Operador2Opt(Evaluador evaluador) {
         this.evaluador = evaluador;
         historial = new ArrayList<>();
@@ -34,13 +35,14 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
      * @return La Solucion que da el mejor resultado, el minimo local.
      */
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
-        Input input = Input.getInstancia();
-        List<Integer> segmentoActual, segmentoCambiado;
+        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getTiempo());
+        List<List<Integer>> rutaActual = solucionInicial.getRuta();
+        int tiempoMejor = solucionInicial.getTiempo();
+
+        List<Integer> segmentoActual, segmentoMejor = null, segmentoCambiado = null;
         int numeroCortes = solucionInicial.getRuta().size();  //Numero de segmentos que tiene la rutaInicial de la que partimos
-        int mejorTiempoInicial = solucionInicial.getTiempo();
-        int tiempoSegmento, tiempoSegmentoCambiado,  tiempoMejor;
-        int indiceMejorTiempo = 0;
-        int contador = -1;
+        int tiempoSegmento, tiempoSegmentoCambiado,  tiempoSegmentoMejor, tiempoAux;
+        int indiceMejorSegmento = -1;
         boolean hayMejora;
 
         // Como la ruta inicial puede tener varios cortes (Ej: [[1, 2, 3], [4, 5, 6]]
@@ -48,14 +50,15 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
         for (int corte = 0; corte < numeroCortes; corte++) {
             // Guardamos el segmento actual con el que estamos trabajando
             segmentoActual = solucionInicial.getRuta().get(corte);
+            System.out.println("Trabajando con segmento: " + segmentoActual);
             // Guardamos el tiempo que se tarda en recorrer ese segmento
             tiempoSegmento = evaluador.evaluarTiempoSegmento(segmentoActual);
             // Guardo en una variable auxiliar el tiempo que se tarda si quitamos el segmento actual con el que vamos a trabajar
             // Utilizamos evaluacion delta para agilizar las operaciones y no tener que evaluar toda una ruta completa para conseguir el tiempo
-            int tiempoAux = mejorTiempoInicial - tiempoSegmento;
-            tiempoMejor = tiempoSegmento;
-            hayMejora = true;
+            tiempoAux = tiempoMejor - tiempoSegmento;
+            tiempoSegmentoMejor = tiempoSegmento;
 
+            hayMejora = true;
             // Bucle para encontrar el mínimo local
             while (hayMejora) {
                 hayMejora = false;
@@ -66,26 +69,18 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                     for (int j = i + 1; j <= segmentoActual.size() - 1; j++) {
                         // Aplicamos el intercambio 2-opt
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
+                        System.out.println("Segmento cambiado: " + segmentoCambiado);
                         // Calculamos el nuevo tiempo del segmento intercambiado
                         tiempoSegmentoCambiado = evaluador.evaluarTiempoSegmento(segmentoCambiado);
 
-                        // Añadimos esta solucion al historial
-                        // Hago una copia de la ruta de la solucion inicial
-                        List<List<Integer>> rutaInicialCopia = new ArrayList<List<Integer>>(solucionInicial.getRuta());
-                        // En la copia, cambio el segmento actual con el que trabajamos por el que intercambiamos
-                        rutaInicialCopia.set(corte, (ArrayList<Integer>) segmentoCambiado);
-                        // Añado al historial la nueva solucion con su tiempo
-                        historial.add(new Solucion(rutaInicialCopia, tiempoAux + tiempoSegmentoCambiado));
-                        // Como añadimos algo al historial, el contador (del indice) suma +1
-                        contador++;
-                        System.out.println(historial.get(contador));
-
                         // Si el tiempo del segmento cambiado es mejor que el inicial, debemos guardarlo como posible solucion
-                        if (tiempoSegmentoCambiado < tiempoMejor) {
+                        if (tiempoSegmentoCambiado < tiempoSegmentoMejor) {
                             hayMejora = true;
-                            tiempoMejor = tiempoSegmentoCambiado;
-                            // Guardo el indice de la mejor solucion que hay en el historial para despues devolverlo
-                            indiceMejorTiempo = contador;
+                            segmentoMejor = segmentoCambiado;
+                            tiempoSegmentoMejor = tiempoSegmentoCambiado;
+                            tiempoMejor = tiempoAux + tiempoSegmentoCambiado;
+                            indiceMejorSegmento = corte;
+
                         }
                     }
                 }
@@ -93,11 +88,17 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                 // Una vez hemos encontrado todos los vecinos del segmento inicial, nos tenemos que quedar con el de mejor resultado
                 // Y debemos entonces generar los vecinos de esta nueva solucion
                 // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorTiempo
-                segmentoActual = historial.get(indiceMejorTiempo).getRuta().get(corte);
-                System.out.println("Mejor vecino: " + segmentoActual);
+                if (hayMejora) {
+                    segmentoActual = segmentoMejor;
+                }
             }
         }
-        return historial.get(indiceMejorTiempo);
+        // Comprobar que haya mejor solucion
+        if (indiceMejorSegmento != -1) {
+            solucionMejor.setTiempo(tiempoMejor);
+            solucionMejor.setSegmento(indiceMejorSegmento, segmentoMejor);
+        }
+        return solucionMejor;
     }
 
     public List<Solucion> getHistorial() {
