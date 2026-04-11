@@ -4,6 +4,7 @@ import operators.Operador2Opt;
 import operators.OperadorOrOpt;
 import operators.OperadorSwap;
 import utils.Evaluador;
+import utils.Experimentador;
 import utils.GeneradorPermutacion;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public class Main {
     private static final int SEMILLA = 2533;
+    private static final int NUM_PERMUTACIONES = 30;
     public static void main(String[] args) {
 
         // Cargamos los datos de entrada iniciales con los que trabajaremos
@@ -46,6 +48,14 @@ public class Main {
         Solucion minimoSwap = operadorSwap.generarMinimoLocal(solucionInicial);
         System.out.println("Solucion minimo swap partiendo de la permutacion aleatoria inicial: " + minimoSwap);
 
+        // Generamos 30 permutaciones distintas
+        List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(NUM_PERMUTACIONES);
+        List<Solucion> listaSoluciones = evaluadorSoluciones.evaluarListaPermutaciones(listaPermutaciones);
 
+        // Creamos un Experimentador
+        Experimentador experimentador = new Experimentador();
+        experimentador.ejecutarExperimento(operador2Opt, listaSoluciones);
+        experimentador.ejecutarExperimento(operadorOrOpt, listaSoluciones);
+        experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);
     }
 }

@@ -7,10 +7,11 @@ import utils.Evaluador;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperadorSwap {
+public class OperadorSwap implements OperadorLocal{
 
     private Evaluador evaluador;
     private Input input;
+    private String nombre = "Swap";
 
     public OperadorSwap(Evaluador evaluador) {
         this.evaluador = evaluador;
@@ -38,7 +39,7 @@ public class OperadorSwap {
         }
         return segmentosCambiado;
     }
-
+    @Override
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
         int tamanoRuta = solucionInicial.getRuta().size();
@@ -57,7 +58,7 @@ public class OperadorSwap {
         while (hayMejora) {
             hayMejora = false;
             tiempoRutaActual = evaluador.evaluarTiempoCompleto(rutaActual);
-            System.out.println("--- Generando vecinos ---");
+            //System.out.println("--- Generando vecinos ---");
             // Itero por todos los segmentos que componen la ruta
             for (int i = 0; i < tamanoRuta - 1; i++) {
                 for (int j = i + 1; j < tamanoRuta; j++) {
@@ -65,7 +66,7 @@ public class OperadorSwap {
                     segmentosACambiar.add(rutaActual.get(i));
                     segmentosACambiar.add(rutaActual.get(j));
 
-                    System.out.println("Segmentos a cambiar: " + segmentosACambiar);
+                    //System.out.println("Segmentos a cambiar: " + segmentosACambiar);
 
                     // Una vez elegidos los segmentos, tendremos que iterar por todos los nodos que los componen para aplicarles el swap
                     segmento1 = new ArrayList<>(segmentosACambiar.get(0));
@@ -79,7 +80,7 @@ public class OperadorSwap {
                         for (int l = 0; l < segmento2.size(); l++) {
                             // Aplico el swap
                             segmentosCambiados = aplicarCambio(segmentosACambiar, k, l);
-                            System.out.println("Segmentos cambiados: " + segmentosCambiados);
+                            //System.out.println("Segmentos cambiados: " + segmentosCambiados);
                             // Si los nodos se pueden intercambiar, calculamos nuevos tiempos
                             if (segmentosCambiados != null) {
                                 tiempoNuevo1 = evaluador.evaluarTiempoSegmento(segmentosCambiados.get(0));
@@ -108,9 +109,10 @@ public class OperadorSwap {
             // TODO: si vuelvo a iterar por todos los segmentos, estare repitiendo pruebas que ya he hecho. porque con el swap solo intercambio dos segmentos
             // TODO: en un futuro, optimizar para solo iterar haciendo swap con los segmentos que cambiaron
             rutaActual = solucionMejor.getRuta();
-            System.out.println("---- Todos los vecinos generados ----");
+            //System.out.println("---- Todos los vecinos generados ----");
         }
 
         return solucionMejor;
     }
+    public String getNombre() { return nombre; }
 }

@@ -8,15 +8,16 @@ import utils.Evaluador;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Operador2Opt implements OperadorLocalIntraRuta{
+public class Operador2Opt implements OperadorLocal {
     private Evaluador evaluador;
     private List<Solucion> historial;
     private Input input;
+    private String nombre = "2-opt";
     public Operador2Opt(Evaluador evaluador) {
         this.evaluador = evaluador;
         historial = new ArrayList<>();
     }
-    @Override
+
     public List<Integer> aplicarCambio(List<Integer> segmento, int v1, int v2) {
         List<Integer> nuevoSegmento = new ArrayList<>(segmento);
         for (int i = v1, j = v2; i < j; i++, j--){
@@ -26,14 +27,12 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
         }
         return nuevoSegmento;
     }
-
     /**
      * Funcion que dada una solucion inicial (de la forma [[1, 2, 3], [4, 5, 6]], itera por todas los segmentos del array.
      * Para cada segmento, se generan todos sus vecinos y se escoge de entre ellos, el de mejor resultado.
      * Se vuelve a repetir el proceso hasta no encontrar vecinos que mejoren el resultado que ya teníamos.
-     * @param solucionInicial
-     * @return La Solucion que da el mejor resultado, el minimo local.
      */
+    @Override
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
         Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getTiempo());
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
@@ -50,7 +49,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
         for (int corte = 0; corte < numeroCortes; corte++) {
             // Guardamos el segmento actual con el que estamos trabajando
             segmentoActual = solucionInicial.getRuta().get(corte);
-            System.out.println("Trabajando con segmento: " + segmentoActual);
+            //System.out.println("Trabajando con segmento: " + segmentoActual);
             // Guardamos el tiempo que se tarda en recorrer ese segmento
             tiempoSegmento = evaluador.evaluarTiempoSegmento(segmentoActual);
             // Guardo en una variable auxiliar el tiempo que se tarda si quitamos el segmento actual con el que vamos a trabajar
@@ -63,13 +62,13 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
             while (hayMejora) {
                 hayMejora = false;
 
-                System.out.println("--- Generando vecinos ---");
+                //System.out.println("--- Generando vecinos ---");
                 //Bucle para encontrar todos los vecinos de un segmento inicial
                 for (int i = 0; i <= segmentoActual.size() - 2; i++) {
                     for (int j = i + 1; j <= segmentoActual.size() - 1; j++) {
                         // Aplicamos el intercambio 2-opt
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
-                        System.out.println("Segmento cambiado: " + segmentoCambiado);
+                        //System.out.println("Segmento cambiado: " + segmentoCambiado);
                         // Calculamos el nuevo tiempo del segmento intercambiado
                         tiempoSegmentoCambiado = evaluador.evaluarTiempoSegmento(segmentoCambiado);
 
@@ -84,7 +83,7 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
                         }
                     }
                 }
-                System.out.println("--- Todos los vecinos generados ---");
+                //System.out.println("--- Todos los vecinos generados ---");
                 // Una vez hemos encontrado todos los vecinos del segmento inicial, nos tenemos que quedar con el de mejor resultado
                 // Y debemos entonces generar los vecinos de esta nueva solucion
                 // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorTiempo
@@ -104,4 +103,5 @@ public class Operador2Opt implements OperadorLocalIntraRuta{
     public List<Solucion> getHistorial() {
         return historial;
     }
+    public String getNombre() { return nombre; }
 }

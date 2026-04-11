@@ -72,6 +72,13 @@ public class Evaluador {
 
         return new Solucion(rutaSolucion, tiempoSolucion);
     }
+    public List<Solucion> evaluarListaPermutaciones(List<List<Integer>> lista) {
+        List<Solucion> soluciones = new ArrayList<>();
+        for(List<Integer> ruta: lista) {
+            soluciones.add(evaluarCompleto(ruta));
+        }
+        return soluciones;
+    }
 
     public int evaluarTiempoCompleto(List<List<Integer>> ruta) {
         int tiempoTotal = 0;

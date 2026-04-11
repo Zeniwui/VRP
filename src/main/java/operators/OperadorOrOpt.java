@@ -8,10 +8,11 @@ import javax.print.attribute.IntegerSyntax;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperadorOrOpt {
+public class OperadorOrOpt implements OperadorLocal{
 
     private Evaluador evaluador;
     private Input input;
+    private String nombre = "OR-opt";
 
     public OperadorOrOpt(Evaluador evaluador) {
         this.evaluador = evaluador;
@@ -38,7 +39,7 @@ public class OperadorOrOpt {
 
         return segmentoCambiado;
     }
-
+    @Override
     public Solucion generarMinimoLocal (Solucion solucionInicial) {
         Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getTiempo());
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
@@ -54,7 +55,7 @@ public class OperadorOrOpt {
         for (int corte = 0; corte < numeroCortes; corte++) {
             // Segmento con el que trabajamos
             segmentoActual = rutaActual.get(corte);
-            System.out.println("Trabajando con segmento: " + segmentoActual);
+            //System.out.println("Trabajando con segmento: " + segmentoActual);
             // Tiempo que se tarda en recorrer ese segmento
             tiempoSegmento = evaluador.evaluarTiempoSegmento(segmentoActual);
             tiempoSegmentoMejor = tiempoSegmento;
@@ -64,7 +65,7 @@ public class OperadorOrOpt {
             while (hayMejora) {
                 hayMejora = false;
 
-                System.out.println("--- Generando vecinos ---");
+                //System.out.println("--- Generando vecinos ---");
                 // En cada segmento, aplicamos el cambio
                 for (int i = 0; i < segmentoActual.size() - 1; i++) {
                     for (int j = 0; j < segmentoActual.size(); j++) {
@@ -74,7 +75,7 @@ public class OperadorOrOpt {
                         }
                         // Aplicamos el cambio
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
-                        System.out.println("Segmento cambiado: " + segmentoCambiado);
+                        //System.out.println("Segmento cambiado: " + segmentoCambiado);
                         // Evaluamos el tiempo del segmento cambiado
                         tiempoSegmentoCambiado = evaluador.evaluarTiempoSegmento(segmentoCambiado);
                         //System.out.println("Tiempo segmento cambiado: "  + tiempoSegmentoCambiado);
@@ -88,7 +89,7 @@ public class OperadorOrOpt {
                         }
                     }
                 }
-                System.out.println("--- Todos los vecinos generados ---");
+                //System.out.println("--- Todos los vecinos generados ---");
                 // Una vez generados todos los vecinos, nos quedamos con el mejor
                 if (hayMejora) {
                     segmentoActual = segmentoMejor;
@@ -103,4 +104,5 @@ public class OperadorOrOpt {
 
         return solucionMejor;
     }
+    public String getNombre() { return nombre; }
 }
