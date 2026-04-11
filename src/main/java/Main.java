@@ -1,6 +1,7 @@
 import model.Input;
 import model.Solucion;
 import operators.Operador2Opt;
+import operators.OperadorOrOpt;
 import operators.OperadorSwap;
 import utils.Evaluador;
 import utils.GeneradorPermutacion;
@@ -34,10 +35,17 @@ public class Main {
         Solucion minimo2Opt = operador2Opt.generarMinimoLocal(solucionInicial);
         System.out.println("Solucion minimo 2-opt partiendo de la permutacion aleatoria inicial: " + minimo2Opt);
 
+        System.out.println("---------------------------------------------- OPERADOR OR-OPT -----------------------------------------------");
+        OperadorOrOpt operadorOrOpt = new OperadorOrOpt(evaluadorSoluciones);
+        Solucion minimoOrOpt = operadorOrOpt.generarMinimoLocal(solucionInicial);
+        System.out.println("Solucion minimo OR-opt partiendo de la permutacion aleatoria inicial: " + minimoOrOpt);
+
         //Generamos la solucion optima aplicando el operador swap
         System.out.println("---------------------------------------------- OPERADOR SWAP -----------------------------------------------");
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);
         Solucion minimoSwap = operadorSwap.generarMinimoLocal(solucionInicial);
         System.out.println("Solucion minimo swap partiendo de la permutacion aleatoria inicial: " + minimoSwap);
+
+
     }
 }
