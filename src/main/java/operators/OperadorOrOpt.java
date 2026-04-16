@@ -2,19 +2,18 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.Evaluador;
+import utils.EvaluadorTiempos;
 
-import javax.print.attribute.IntegerSyntax;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OperadorOrOpt implements OperadorLocal{
 
-    private Evaluador evaluador;
+    private EvaluadorTiempos evaluador;
     private Input input;
     private String nombre = "OR-opt";
 
-    public OperadorOrOpt(Evaluador evaluador) {
+    public OperadorOrOpt(EvaluadorTiempos evaluador) {
         this.evaluador = evaluador;
         input = Input.getInstancia();
     }

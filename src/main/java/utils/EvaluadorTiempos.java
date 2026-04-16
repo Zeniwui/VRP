@@ -6,13 +6,13 @@ import model.Solucion;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Evaluador {
+public class EvaluadorTiempos {
     private int dimension;
     private int capacidad;
     private int[] demandas;
     private int[][] tiempos;
 
-    public Evaluador(Input input) {
+    public EvaluadorTiempos(Input input) {
         this.dimension = input.getDimension();
         this.capacidad = input.getCapacidad();
         this.demandas = input.getDemandas();

@@ -6,10 +6,16 @@ import java.util.List;
 public class Solucion {
     private List<List<Integer>> rutas;
     private int tiempo;
+    private double distancia;
 
     public Solucion(List<List<Integer>> r, int t) {
         rutas = r;
         tiempo = t;
+    }
+
+    public Solucion(List<List<Integer>> r, double d) {
+        rutas = r;
+        distancia = d;
     }
 
     /**
@@ -33,6 +39,7 @@ public class Solucion {
     public int getTiempo() {
         return tiempo;
     }
+    public double getDistancia() { return distancia; }
     public List<List<Integer>> getRuta() { return rutas; }
 
     public void setTiempo(int tiempo) {

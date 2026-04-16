@@ -3,17 +3,17 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.Evaluador;
+import utils.EvaluadorTiempos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Operador2Opt implements OperadorLocal {
-    private Evaluador evaluador;
+    private EvaluadorTiempos evaluador;
     private List<Solucion> historial;
     private Input input;
     private String nombre = "2-opt";
-    public Operador2Opt(Evaluador evaluador) {
+    public Operador2Opt(EvaluadorTiempos evaluador) {
         this.evaluador = evaluador;
         historial = new ArrayList<>();
     }

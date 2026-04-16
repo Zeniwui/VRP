@@ -2,18 +2,18 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.Evaluador;
+import utils.EvaluadorTiempos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OperadorSwap implements OperadorLocal{
 
-    private Evaluador evaluador;
+    private EvaluadorTiempos evaluador;
     private Input input;
     private String nombre = "Swap";
 
-    public OperadorSwap(Evaluador evaluador) {
+    public OperadorSwap(EvaluadorTiempos evaluador) {
         this.evaluador = evaluador;
         input = Input.getInstancia();
     }
