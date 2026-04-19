@@ -58,7 +58,6 @@ public class OperadorSwap implements OperadorLocal{
         while (hayMejora) {
             hayMejora = false;
             costoRutaActual = evaluador.evaluarRutaCompleta(rutaActual);
-            System.out.println("swap-CostoRutaActual: " + costoRutaActual);
             //System.out.println("--- Generando vecinos ---");
             // Itero por todos los segmentos que componen la ruta
             for (int i = 0; i < tamanoRuta - 1; i++) {
@@ -100,7 +99,6 @@ public class OperadorSwap implements OperadorLocal{
                                     solucionMejor.setSegmento(i, segmentosCambiados.get(0));
                                     solucionMejor.setSegmento(j, segmentosCambiados.get(1));
                                     solucionMejor.setCosto(costoNuevoTotal);
-                                    System.out.println(solucionMejor);
                                 }
                             }
                         }

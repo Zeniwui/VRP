@@ -39,13 +39,13 @@ public class Estadisticas {
 
         desviacionTipica = Math.sqrt(sumaCuadrados / datos.size());
 
-        System.out.println("==================================================");
+        System.out.println("------------------------------------------------------------------------------------");
         System.out.println("            ESTADÍSTICAS           ");
         System.out.println("Mejor: " + mejor);
         System.out.println("Peor: " + peor);
         System.out.println("Promedio: " + promedio);
         System.out.println("Desviacion tipica: " + desviacionTipica);
-        System.out.println("==================================================");
+        System.out.println("\n\n");
 
     }
 

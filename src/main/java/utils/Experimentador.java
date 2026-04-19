@@ -22,6 +22,7 @@ public class Experimentador {
         tiempoFin = System.nanoTime();
         tiempoCPU_ms = (tiempoFin - tiempoInicio) / 1_000_000.0;
 
+        System.out.println("============================================================================================");
         System.out.printf("Tiempo ejecución %s %d repeticiones: %f ms\n", operador.getNombre(), numIteraciones, tiempoCPU_ms);
         Estadisticas estadisticas = new Estadisticas(resultados);
         estadisticas.calcularBasico();
