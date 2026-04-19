@@ -11,7 +11,7 @@ public class Input {
     private static Input instancia;
     private int dimension;
     private int capacidad;
-    private int[][] tiempos;
+    private double[][] tiempos;
     private int[] demandas;
     private int[] coordX;
     private int[] coordY;
@@ -52,7 +52,7 @@ public class Input {
             } else if (linea.startsWith("CAPACIDAD:")) {
                 this.capacidad = Integer.parseInt(linea.split(":")[1].trim());
             } else if (linea.startsWith("TIEMPOS")) {
-                this.tiempos = new int[dimension][dimension];
+                this.tiempos = new double[dimension][dimension];
                 for (int f = 0; f < dimension; f++) {
                     String[] fila = lineas.get(++i).trim().split("\\s+");
                     for (int c = 0; c < dimension; c++) {
@@ -134,7 +134,7 @@ public class Input {
         this.coordX = new int[dimension];
         this.coordY = new int[dimension];
         this.distancias = new double[dimension][dimension];
-        this.tiempos = new int[dimension][dimension];
+        this.tiempos = new double[dimension][dimension];
 
         boolean leerNodos = false;
         for (int i = 0; i < lineas.size(); i++) {
@@ -225,7 +225,7 @@ public class Input {
         return capacidad;
     }
 
-    public int[][] getTiempos() {
+    public double[][] getTiempos() {
         return tiempos;
     }
 

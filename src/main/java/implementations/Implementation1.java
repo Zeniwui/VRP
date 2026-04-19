@@ -55,6 +55,6 @@ public class Implementation1 {
         Experimentador experimentador = new Experimentador();
         experimentador.ejecutarExperimento(operador2Opt, listaSoluciones);
         experimentador.ejecutarExperimento(operadorOrOpt, listaSoluciones);
-        experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);
+        //experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);
     }
 }

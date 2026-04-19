@@ -2,18 +2,18 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.EvaluadorTiempos;
+import utils.Evaluador;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OperadorOrOpt implements OperadorLocal{
 
-    private EvaluadorTiempos evaluador;
+    private Evaluador evaluador;
     private Input input;
     private String nombre = "OR-opt";
 
-    public OperadorOrOpt(EvaluadorTiempos evaluador) {
+    public OperadorOrOpt(Evaluador evaluador) {
         this.evaluador = evaluador;
         input = Input.getInstancia();
     }
@@ -40,13 +40,13 @@ public class OperadorOrOpt implements OperadorLocal{
     }
     @Override
     public Solucion generarMinimoLocal (Solucion solucionInicial) {
-        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getTiempo());
+        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
-        int tiempoMejor = solucionInicial.getTiempo();
+        double costoMejor = solucionInicial.getCosto();
         List<Integer> segmentoActual, segmentoMejor = null;
         List<Integer> segmentoCambiado = null;
         int indiceMejorSegmento = -1;
-        int tiempoSegmento, tiempoSegmentoCambiado, tiempoSegmentoMejor, tiempoAux;
+        double costoSegmento, costoSegmentoCambiado, costoSegmentoMejor, costoAux;
         int numeroCortes = solucionInicial.getRuta().size();
         boolean hayMejora;
 
@@ -55,10 +55,10 @@ public class OperadorOrOpt implements OperadorLocal{
             // Segmento con el que trabajamos
             segmentoActual = rutaActual.get(corte);
             //System.out.println("Trabajando con segmento: " + segmentoActual);
-            // Tiempo que se tarda en recorrer ese segmento
-            tiempoSegmento = evaluador.evaluarTiempoSegmento(segmentoActual);
-            tiempoSegmentoMejor = tiempoSegmento;
-            tiempoAux = solucionInicial.getTiempo() - tiempoSegmento;
+            // costo de recorrer ese segmento
+            costoSegmento = evaluador.evaluarSegmento(segmentoActual);
+            costoSegmentoMejor = costoSegmento;
+            costoAux = solucionInicial.getCosto() - costoSegmento;
 
             hayMejora = true;
             while (hayMejora) {
@@ -75,15 +75,15 @@ public class OperadorOrOpt implements OperadorLocal{
                         // Aplicamos el cambio
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
                         //System.out.println("Segmento cambiado: " + segmentoCambiado);
-                        // Evaluamos el tiempo del segmento cambiado
-                        tiempoSegmentoCambiado = evaluador.evaluarTiempoSegmento(segmentoCambiado);
-                        //System.out.println("Tiempo segmento cambiado: "  + tiempoSegmentoCambiado);
+                        // Evaluamos el costo del segmento cambiado
+                        costoSegmentoCambiado = evaluador.evaluarSegmento(segmentoCambiado);
+                        //System.out.println("costo segmento cambiado: "  + costoSegmentoCambiado);
 
-                        if (tiempoSegmentoCambiado < tiempoSegmentoMejor) {
+                        if (costoSegmentoCambiado < costoSegmentoMejor) {
                             hayMejora = true;
                             segmentoMejor = segmentoCambiado;
-                            tiempoSegmentoMejor = tiempoSegmentoCambiado;
-                            tiempoMejor = tiempoAux + tiempoSegmentoCambiado;
+                            costoSegmentoMejor = costoSegmentoCambiado;
+                            costoMejor = costoAux + costoSegmentoCambiado;
                             indiceMejorSegmento = corte;
                         }
                     }
@@ -97,7 +97,7 @@ public class OperadorOrOpt implements OperadorLocal{
         }
         // Comprobar que haya mejor solucion
         if (indiceMejorSegmento != -1) {
-            solucionMejor.setTiempo(tiempoMejor);
+            solucionMejor.setCosto(costoMejor);
             solucionMejor.setSegmento(indiceMejorSegmento, segmentoMejor);
         }
 

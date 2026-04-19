@@ -5,17 +5,11 @@ import java.util.List;
 
 public class Solucion {
     private List<List<Integer>> rutas;
-    private int tiempo;
-    private double distancia;
+    private double costo;
 
-    public Solucion(List<List<Integer>> r, int t) {
+    public Solucion(List<List<Integer>> r, double c) {
         rutas = r;
-        tiempo = t;
-    }
-
-    public Solucion(List<List<Integer>> r, double d) {
-        rutas = r;
-        distancia = d;
+        costo = c;
     }
 
     /**
@@ -23,7 +17,7 @@ public class Solucion {
      * @param otra
      */
     public Solucion(Solucion otra) {
-        this.tiempo = otra.tiempo;
+        this.costo = otra.costo;
 
         this.rutas = new ArrayList<>();
         for (List<Integer> subruta : otra.rutas) {
@@ -33,17 +27,17 @@ public class Solucion {
 
     @Override
     public String toString() {
-        return "Tiempo: " + tiempo + " // ruta: " + rutas.toString() + "\n";
+        return "Costo: " + String.format("%.2f", costo)
+                + " // ruta: " + rutas.toString() + "\n";
     }
 
-    public int getTiempo() {
-        return tiempo;
+    public double getCosto() {
+        return costo;
     }
-    public double getDistancia() { return distancia; }
     public List<List<Integer>> getRuta() { return rutas; }
 
-    public void setTiempo(int tiempo) {
-        this.tiempo = tiempo;
+    public void setCosto(double costo) {
+        this.costo = costo;
     }
     /*
      * Cambia el segmento en el indice i por el que se le pasa como parametro

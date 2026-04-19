@@ -3,17 +3,17 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.EvaluadorTiempos;
+import utils.Evaluador;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Operador2Opt implements OperadorLocal {
-    private EvaluadorTiempos evaluador;
+    private Evaluador evaluador;
     private List<Solucion> historial;
     private Input input;
     private String nombre = "2-opt";
-    public Operador2Opt(EvaluadorTiempos evaluador) {
+    public Operador2Opt(Evaluador evaluador) {
         this.evaluador = evaluador;
         historial = new ArrayList<>();
     }
@@ -34,13 +34,13 @@ public class Operador2Opt implements OperadorLocal {
      */
     @Override
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
-        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getTiempo());
+        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
-        int tiempoMejor = solucionInicial.getTiempo();
+        double costoMejor = solucionInicial.getCosto();
 
         List<Integer> segmentoActual, segmentoMejor = null, segmentoCambiado = null;
         int numeroCortes = solucionInicial.getRuta().size();  //Numero de segmentos que tiene la rutaInicial de la que partimos
-        int tiempoSegmento, tiempoSegmentoCambiado,  tiempoSegmentoMejor, tiempoAux;
+        double costoSegmento, costoSegmentoCambiado,  costoSegmentoMejor, costoAux;
         int indiceMejorSegmento = -1;
         boolean hayMejora;
 
@@ -50,12 +50,12 @@ public class Operador2Opt implements OperadorLocal {
             // Guardamos el segmento actual con el que estamos trabajando
             segmentoActual = solucionInicial.getRuta().get(corte);
             //System.out.println("Trabajando con segmento: " + segmentoActual);
-            // Guardamos el tiempo que se tarda en recorrer ese segmento
-            tiempoSegmento = evaluador.evaluarTiempoSegmento(segmentoActual);
-            // Guardo en una variable auxiliar el tiempo que se tarda si quitamos el segmento actual con el que vamos a trabajar
-            // Utilizamos evaluacion delta para agilizar las operaciones y no tener que evaluar toda una ruta completa para conseguir el tiempo
-            tiempoAux = tiempoMejor - tiempoSegmento;
-            tiempoSegmentoMejor = tiempoSegmento;
+            // Guardamos el costo de recorrer ese segmento
+            costoSegmento = evaluador.evaluarSegmento(segmentoActual);
+            // Guardo en una variable auxiliar el costo si quitamos el segmento actual con el que vamos a trabajar
+            // Utilizamos evaluacion delta para agilizar las operaciones y no tener que evaluar toda una ruta completa para conseguir el costo
+            costoAux = costoMejor - costoSegmento;
+            costoSegmentoMejor = costoSegmento;
 
             hayMejora = true;
             // Bucle para encontrar el mínimo local
@@ -69,15 +69,15 @@ public class Operador2Opt implements OperadorLocal {
                         // Aplicamos el intercambio 2-opt
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
                         //System.out.println("Segmento cambiado: " + segmentoCambiado);
-                        // Calculamos el nuevo tiempo del segmento intercambiado
-                        tiempoSegmentoCambiado = evaluador.evaluarTiempoSegmento(segmentoCambiado);
+                        // Calculamos el nuevo costo del segmento intercambiado
+                        costoSegmentoCambiado = evaluador.evaluarSegmento(segmentoCambiado);
 
-                        // Si el tiempo del segmento cambiado es mejor que el inicial, debemos guardarlo como posible solucion
-                        if (tiempoSegmentoCambiado < tiempoSegmentoMejor) {
+                        // Si el costo del segmento cambiado es mejor que el inicial, debemos guardarlo como posible solucion
+                        if (costoSegmentoCambiado < costoSegmentoMejor) {
                             hayMejora = true;
                             segmentoMejor = segmentoCambiado;
-                            tiempoSegmentoMejor = tiempoSegmentoCambiado;
-                            tiempoMejor = tiempoAux + tiempoSegmentoCambiado;
+                            costoSegmentoMejor = costoSegmentoCambiado;
+                            costoMejor = costoAux + costoSegmentoCambiado;
                             indiceMejorSegmento = corte;
 
                         }
@@ -86,7 +86,7 @@ public class Operador2Opt implements OperadorLocal {
                 //System.out.println("--- Todos los vecinos generados ---");
                 // Una vez hemos encontrado todos los vecinos del segmento inicial, nos tenemos que quedar con el de mejor resultado
                 // Y debemos entonces generar los vecinos de esta nueva solucion
-                // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorTiempo
+                // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorcosto
                 if (hayMejora) {
                     segmentoActual = segmentoMejor;
                 }
@@ -94,7 +94,7 @@ public class Operador2Opt implements OperadorLocal {
         }
         // Comprobar que haya mejor solucion
         if (indiceMejorSegmento != -1) {
-            solucionMejor.setTiempo(tiempoMejor);
+            solucionMejor.setCosto(costoMejor);
             solucionMejor.setSegmento(indiceMejorSegmento, segmentoMejor);
         }
         return solucionMejor;

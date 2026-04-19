@@ -1,4 +1,6 @@
 import implementations.ImplementacionSolomon;
+import implementations.Implementation1;
+import utils.Evaluador;
 
 public class Main {
     private static final int SEMILLA = 2533;
@@ -6,7 +8,11 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //Implementation1 mio = new Implementation1();
+        //mio.implementar(SEMILLA, NUM_PERMUTACIONES);
+
         ImplementacionSolomon solomon = new ImplementacionSolomon();
         solomon.implementar(SEMILLA, NUM_PERMUTACIONES);
+
     }
 }

@@ -20,20 +20,20 @@ public class Estadisticas {
         double sumaCuadrados = 0.0;
 
         for (Solucion dato: datos) {
-            if (dato.getTiempo() < mejor.getTiempo()) {
+            if (dato.getCosto() < mejor.getCosto()) {
                 mejor = dato;
             }
-            if (dato.getTiempo() > peor.getTiempo()) {
+            if (dato.getCosto() > peor.getCosto()) {
                 peor = dato;
             }
-            totalTiempo += dato.getTiempo();
+            totalTiempo += dato.getCosto();
         }
         promedio = (double) totalTiempo / datos.size();
 
         sumaCuadrados = 0.0;
 
         for (Solucion dato : datos) {
-            diferencia = dato.getTiempo() - promedio;
+            diferencia = dato.getCosto() - promedio;
             sumaCuadrados += diferencia * diferencia;
         }
 

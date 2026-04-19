@@ -2,18 +2,18 @@ package operators;
 
 import model.Input;
 import model.Solucion;
-import utils.EvaluadorTiempos;
+import utils.Evaluador;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OperadorSwap implements OperadorLocal{
 
-    private EvaluadorTiempos evaluador;
+    private Evaluador evaluador;
     private Input input;
     private String nombre = "Swap";
 
-    public OperadorSwap(EvaluadorTiempos evaluador) {
+    public OperadorSwap(Evaluador evaluador) {
         this.evaluador = evaluador;
         input = Input.getInstancia();
     }
@@ -43,21 +43,22 @@ public class OperadorSwap implements OperadorLocal{
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
         int tamanoRuta = solucionInicial.getRuta().size();
-        int tiempoMejor = solucionInicial.getTiempo();
+        double costoMejor = solucionInicial.getCosto();
 
         Solucion solucionMejor = new Solucion(solucionInicial);
         List<List<Integer>> segmentosACambiar = new ArrayList<>(2);
         List<Integer> segmento1;
         List<Integer> segmento2;
         List<List<Integer>> segmentosCambiados;
-        int tiempoSeg1, tiempoSeg2, tiempoAux, tiempoNuevo1, tiempoNuevo2, tiempoNuevoTotal;
-        int tiempoRutaActual;
+        double costoSeg1, costoSeg2, costoAux, costoNuevo1, costoNuevo2, costoNuevoTotal;
+        double costoRutaActual;
         boolean hayMejora = true;
 
         // Bucle para encontrar el minimo local
         while (hayMejora) {
             hayMejora = false;
-            tiempoRutaActual = evaluador.evaluarTiempoCompleto(rutaActual);
+            costoRutaActual = evaluador.evaluarRutaCompleta(rutaActual);
+            System.out.println("swap-CostoRutaActual: " + costoRutaActual);
             //System.out.println("--- Generando vecinos ---");
             // Itero por todos los segmentos que componen la ruta
             for (int i = 0; i < tamanoRuta - 1; i++) {
@@ -70,35 +71,36 @@ public class OperadorSwap implements OperadorLocal{
 
                     // Una vez elegidos los segmentos, tendremos que iterar por todos los nodos que los componen para aplicarles el swap
                     segmento1 = new ArrayList<>(segmentosACambiar.get(0));
-                    tiempoSeg1 = evaluador.evaluarTiempoSegmento(segmento1);
+                    costoSeg1 = evaluador.evaluarSegmento(segmento1);
                     segmento2 = new ArrayList<>(segmentosACambiar.get(1));
-                    tiempoSeg2 = evaluador.evaluarTiempoSegmento(segmento2);
+                    costoSeg2 = evaluador.evaluarSegmento(segmento2);
 
-                    tiempoAux = tiempoRutaActual - tiempoSeg1 - tiempoSeg2;
+                    costoAux = costoRutaActual - costoSeg1 - costoSeg2;
 
                     for (int k = 0; k < segmento1.size(); k++) {
                         for (int l = 0; l < segmento2.size(); l++) {
                             // Aplico el swap
                             segmentosCambiados = aplicarCambio(segmentosACambiar, k, l);
                             //System.out.println("Segmentos cambiados: " + segmentosCambiados);
-                            // Si los nodos se pueden intercambiar, calculamos nuevos tiempos
+                            // Si los nodos se pueden intercambiar, calculamos nuevos costos
                             if (segmentosCambiados != null) {
-                                tiempoNuevo1 = evaluador.evaluarTiempoSegmento(segmentosCambiados.get(0));
-                                tiempoNuevo2 = evaluador.evaluarTiempoSegmento(segmentosCambiados.get(1));
-                                tiempoNuevoTotal = tiempoAux + tiempoNuevo1 + tiempoNuevo2;
+                                costoNuevo1 = evaluador.evaluarSegmento(segmentosCambiados.get(0));
+                                costoNuevo2 = evaluador.evaluarSegmento(segmentosCambiados.get(1));
+                                costoNuevoTotal = costoAux + costoNuevo1 + costoNuevo2;
 
-                                // Si el nuevo tiempo es mejor que el que teniamos, tenemos que guardar la solucion
-                                if (tiempoNuevoTotal < tiempoMejor) {
+                                // Si el nuevo costo es mejor que el que teniamos, tenemos que guardar la solucion
+                                if (costoNuevoTotal < costoMejor) {
                                     // Hemos encontrado una mejora
                                     hayMejora = true;
-                                    // Actualizamos el mejor tiempo
-                                    tiempoMejor = tiempoNuevoTotal;
+                                    // Actualizamos el mejor costo
+                                    costoMejor = costoNuevoTotal;
                                     // Antes que poner la ruta en la solucion la actualizamos por si hubo cambios anteriores
                                     solucionMejor.copiarRuta(rutaActual);
                                     // En la solucion mejor introducimos los segmentos cambiados que nos proporcionaron mejor resultado
                                     solucionMejor.setSegmento(i, segmentosCambiados.get(0));
                                     solucionMejor.setSegmento(j, segmentosCambiados.get(1));
-                                    solucionMejor.setTiempo(tiempoNuevoTotal);
+                                    solucionMejor.setCosto(costoNuevoTotal);
+                                    System.out.println(solucionMejor);
                                 }
                             }
                         }

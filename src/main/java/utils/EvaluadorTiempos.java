@@ -6,11 +6,11 @@ import model.Solucion;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EvaluadorTiempos {
+public class EvaluadorTiempos implements  Evaluador{
     private int dimension;
     private int capacidad;
     private int[] demandas;
-    private int[][] tiempos;
+    private double[][] tiempos;
 
     public EvaluadorTiempos(Input input) {
         this.dimension = input.getDimension();
@@ -25,8 +25,9 @@ public class EvaluadorTiempos {
      * @param permutacion Lista de enteros correspondientes al orden que debe seguir la ruta
      * @return Solucion compuesta por la permutacion cortada y el tiempo total que tarda en hacer esa ruta
      */
+    @Override
     public Solucion evaluarCompleto(List<Integer> permutacion) {
-        int tiempoSolucion = 0;
+        double tiempoSolucion = 0;
 
         List<List<Integer>> rutaSolucion = new ArrayList<>();
         rutaSolucion.add(new ArrayList<>());
@@ -35,7 +36,7 @@ public class EvaluadorTiempos {
         int nodoDondeEstoy = 0;
         int i = 0;
         int corte = 0;
-        while (i < dimension - 1) {
+        while (i < permutacion.size()) {
 
             int nodoAIr = permutacion.get(i);
 
@@ -79,11 +80,11 @@ public class EvaluadorTiempos {
         }
         return soluciones;
     }
-
-    public int evaluarTiempoCompleto(List<List<Integer>> ruta) {
-        int tiempoTotal = 0;
+    @Override
+    public double evaluarRutaCompleta(List<List<Integer>> ruta) {
+        double tiempoTotal = 0.0;
         for (List<Integer> segmento: ruta) {
-            tiempoTotal += evaluarTiempoSegmento(segmento);
+            tiempoTotal += evaluarSegmento(segmento);
         }
         return tiempoTotal;
     }
@@ -92,8 +93,9 @@ public class EvaluadorTiempos {
      * @param segmento
      * @return
      */
-    public int evaluarTiempoSegmento(List<Integer> segmento) {
-        int tiempoTotal = 0;
+    @Override
+    public double evaluarSegmento(List<Integer> segmento) {
+        double tiempoTotal = 0.0;
         tiempoTotal += tiempos[0][segmento.get(0)];
         for (int i = 0; i < segmento.size() - 1; i++) {
             tiempoTotal += tiempos[segmento.get(i)][segmento.get(i+1)];
@@ -107,6 +109,7 @@ public class EvaluadorTiempos {
      * @param segmento
      * @return
      */
+    @Override
     public boolean suficienteCapacidadParaCubrirSegmento (List<Integer> segmento) {
         int capacidadRestante = capacidad;
 
