@@ -12,7 +12,7 @@ import java.util.List;
 public class ImplementacionSolomon {
     public void implementar(int semilla, int numPermutaciones) {
         Input input = Input.getInstancia();
-        input.cargarDatosSolomon("c101.txt");
+        input.cargarDatosSolomon("c201.txt");
         input.mostrarDatosCargadosSolomon();
 
         EvaluadorDistancias evaluadorSoluciones = new EvaluadorDistancias(input);
