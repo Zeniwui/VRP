@@ -46,7 +46,7 @@ public class OperadorOrOpt implements OperadorLocal{
         List<Double> costesMejoresSegmentos = new ArrayList<>(numeroSegmentos); // Array para guardar los mejores costes de cada segmento
         List<List<Integer>> listaMejoresSegmentos = new ArrayList<>(new ArrayList<>()); // Array para guardar los resultados de los mejores segmentos de cada corte
         double costoSegmento, costoSegmentoCambiado, costoSegmentoMejor, costoAux, diferencia, diferenciaMayor = 0;
-        int indiceMejorSegmento = -1;
+
         boolean hayMejora;
 
         int numAceptaciones = 0;
@@ -59,6 +59,7 @@ public class OperadorOrOpt implements OperadorLocal{
             // costo de recorrer ese segmento
             costoSegmento = evaluador.evaluarSegmento(segmentoActual);
             costesMejoresSegmentos.add(corte, costoSegmento);
+            listaMejoresSegmentos.add(segmentoActual);
             costoSegmentoMejor = costoSegmento;
             costoAux = solucionInicial.getCosto() - costoSegmento;
 
@@ -91,7 +92,82 @@ public class OperadorOrOpt implements OperadorLocal{
                             costesMejoresSegmentos.set(corte, costoSegmentoMejor);
 
                             // Guardo en la lista de segmentos ese segmento que ha dado mejor resultado
-                            listaMejoresSegmentos.add(corte, segmentoMejor);
+                            listaMejoresSegmentos.set(corte, segmentoMejor);
+                        }
+                    }
+                }
+                //System.out.println("--- Todos los vecinos generados ---");
+                // Una vez generados todos los vecinos, nos quedamos con el mejor
+                if (hayMejora) {
+                    segmentoActual = segmentoMejor;
+                    solucionMejor.setSegmento(corte, listaMejoresSegmentos.get(corte));
+                    // Si hay mejora, entonces aceptamos una solucion nueva
+                    numAceptaciones++;
+                }
+            }
+        }
+        System.out.println(listaMejoresSegmentos);
+        solucionMejor.setCosto(evaluador.evaluarRutaCompleta(listaMejoresSegmentos));
+
+        //System.out.println(numAceptaciones);
+        return solucionMejor;
+    }
+    public Solucion generarMinimoTodosSegmentos (Solucion solucionInicial) {
+        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
+        double costoMejor = solucionInicial.getCosto();
+
+        List<Integer> segmentoActual, segmentoMejor = null, segmentoCambiado = null;
+        int numeroSegmentos = solucionInicial.getRuta().size();
+        List<Double> costesMejoresSegmentos = new ArrayList<>(numeroSegmentos); // Array para guardar los mejores costes de cada segmento
+        List<List<Integer>> listaMejoresSegmentos = new ArrayList<>(new ArrayList<>()); // Array para guardar los resultados de los mejores segmentos de cada corte
+        double costoSegmento, costoSegmentoCambiado, costoSegmentoMejor, costoAux, diferencia, diferenciaMayor = 0;
+        int indiceMejorSegmento = -1;
+        boolean hayMejora;
+
+        int numAceptaciones = 0;
+
+        // Tenemos que iterar por todos los segmentos que componen la ruta inicial
+        for (int corte = 0; corte < numeroSegmentos; corte++) {
+            // Segmento con el que trabajamos
+            segmentoActual = solucionInicial.getRuta().get(corte);
+            //System.out.println("Trabajando con segmento: " + segmentoActual);
+            // costo de recorrer ese segmento
+            costoSegmento = evaluador.evaluarSegmento(segmentoActual);
+            costesMejoresSegmentos.add(corte, costoSegmento);
+            listaMejoresSegmentos.add(segmentoActual);
+            costoSegmentoMejor = costoSegmento;
+            costoAux = solucionInicial.getCosto() - costoSegmento;
+
+            hayMejora = true;
+            while (hayMejora) {
+                hayMejora = false;
+
+                //System.out.println("--- Generando vecinos ---");
+                // En cada segmento, aplicamos el cambio
+                for (int i = 0; i < segmentoActual.size() - 1; i++) {
+                    for (int j = 0; j < segmentoActual.size(); j++) {
+
+                        if (( j == i) || (j == i + 1)) {
+                            continue;
+                        }
+                        // Aplicamos el cambio
+                        segmentoCambiado = aplicarCambio(segmentoActual, i, j);
+                        //System.out.println("Segmento cambiado: " + segmentoCambiado);
+                        // Evaluamos el costo del segmento cambiado
+                        costoSegmentoCambiado = evaluador.evaluarSegmento(segmentoCambiado);
+                        //System.out.println("costo segmento cambiado: "  + costoSegmentoCambiado);
+
+                        if (costoSegmentoCambiado < costoSegmentoMejor) {
+                            hayMejora = true;
+                            segmentoMejor = segmentoCambiado;
+                            costoSegmentoMejor = costoSegmentoCambiado;
+                            costoMejor = costoAux + costoSegmentoCambiado;
+
+                            //  Guardo en la lista de costes el nuevo coste que ha mejorado el coste inicial
+                            costesMejoresSegmentos.set(corte, costoSegmentoMejor);
+
+                            // Guardo en la lista de segmentos ese segmento que ha dado mejor resultado
+                            listaMejoresSegmentos.set(corte, segmentoMejor);
                         }
                     }
                 }
@@ -123,5 +199,6 @@ public class OperadorOrOpt implements OperadorLocal{
         //System.out.println(numAceptaciones);
         return solucionMejor;
     }
+
     public String getNombre() { return nombre; }
 }

@@ -35,7 +35,7 @@ public class Implementation1 {
         // Generamos la solucion optima aplicando el operador 2-opt
         System.out.println("---------------------------------------------- OPERADOR 2-OPT -----------------------------------------------");
         Operador2Opt operador2Opt = new Operador2Opt(evaluadorSoluciones);
-        Solucion minimo2Opt = operador2Opt.generarMinimoLocal(solucionInicial);
+        Solucion minimo2Opt = operador2Opt.generarMinimoTodosSegmentos(solucionInicial);
         System.out.println("Solucion minimo 2-opt partiendo de la permutacion aleatoria inicial: " + minimo2Opt);
 
         System.out.println("---------------------------------------------- OPERADOR OR-OPT -----------------------------------------------");

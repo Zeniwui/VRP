@@ -17,10 +17,10 @@ public class Main {
         //mio.implementar(SEMILLA, NUM_PERMUTACIONES);
 
         ImplementacionSolomon solomon = new ImplementacionSolomon();
-        solomon.implementar(SEMILLA, NUM_PERMUTACIONES);
+        //solomon.implementar(SEMILLA, NUM_PERMUTACIONES);
 
         ImplementacionTSPLIB tsplib = new ImplementacionTSPLIB();
-        //tsplib.implementar(SEMILLA, NUM_PERMUTACIONES);
+        tsplib.implementar(SEMILLA, NUM_PERMUTACIONES);
 
     }
 }
