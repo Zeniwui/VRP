@@ -59,6 +59,7 @@ public class OperadorOrOpt implements OperadorLocal{
             // costo de recorrer ese segmento
             costoSegmento = evaluador.evaluarSegmento(segmentoActual);
             costesMejoresSegmentos.add(corte, costoSegmento);
+            listaMejoresSegmentos.add(segmentoActual);
             costoSegmentoMejor = costoSegmento;
             costoAux = solucionInicial.getCosto() - costoSegmento;
 
@@ -91,7 +92,7 @@ public class OperadorOrOpt implements OperadorLocal{
                             costesMejoresSegmentos.set(corte, costoSegmentoMejor);
 
                             // Guardo en la lista de segmentos ese segmento que ha dado mejor resultado
-                            listaMejoresSegmentos.add(corte, segmentoMejor);
+                            listaMejoresSegmentos.set(corte, segmentoMejor);
                         }
                     }
                 }
