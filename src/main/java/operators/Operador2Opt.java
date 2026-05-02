@@ -11,7 +11,6 @@ import java.util.List;
 public class Operador2Opt implements OperadorLocal {
     private Evaluador evaluador;
     private List<Solucion> historial;
-    private Input input;
     private String nombre = "2-opt";
     public Operador2Opt(Evaluador evaluador) {
         this.evaluador = evaluador;
@@ -35,26 +34,30 @@ public class Operador2Opt implements OperadorLocal {
     @Override
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
         Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
-        List<List<Integer>> rutaActual = solucionInicial.getRuta();
         double costoMejor = solucionInicial.getCosto();
 
         List<Integer> segmentoActual, segmentoMejor = null, segmentoCambiado = null;
-        int numeroCortes = solucionInicial.getRuta().size();  //Numero de segmentos que tiene la rutaInicial de la que partimos
-        double costoSegmento, costoSegmentoCambiado,  costoSegmentoMejor, costoAux;
+        int numeroSegmentos = solucionInicial.getRuta().size();  //Numero de segmentos que tiene la rutaInicial de la que partimos
+        List<Double> costesMejoresSegmentos = new ArrayList<>(numeroSegmentos); // Array para guardar los mejores costes de cada segmento
+        List<List<Integer>> listaMejoresSegmentos = new ArrayList<>(new ArrayList<>()); // Array para guardar los resultados de los mejores segmentos de cada corte
+        double costoSegmento, costoSegmentoCambiado,  costoSegmentoMejor, costoAux, diferencia, diferenciaMayor = 0;
         int indiceMejorSegmento = -1;
         boolean hayMejora;
 
+        int numAceptaciones = 0;
+
         // Como la ruta inicial puede tener varios cortes (Ej: [[1, 2, 3], [4, 5, 6]]
         // debemos aplicar el operador en cada segmento
-        for (int corte = 0; corte < numeroCortes; corte++) {
+        for (int corte = 0; corte < numeroSegmentos; corte++) {
             // Guardamos el segmento actual con el que estamos trabajando
             segmentoActual = solucionInicial.getRuta().get(corte);
             //System.out.println("Trabajando con segmento: " + segmentoActual);
             // Guardamos el costo de recorrer ese segmento
             costoSegmento = evaluador.evaluarSegmento(segmentoActual);
+            costesMejoresSegmentos.add(corte, costoSegmento);
             // Guardo en una variable auxiliar el costo si quitamos el segmento actual con el que vamos a trabajar
             // Utilizamos evaluacion delta para agilizar las operaciones y no tener que evaluar toda una ruta completa para conseguir el costo
-            costoAux = costoMejor - costoSegmento;
+            costoAux = solucionInicial.getCosto() - costoSegmento;
             costoSegmentoMejor = costoSegmento;
 
             hayMejora = true;
@@ -78,8 +81,12 @@ public class Operador2Opt implements OperadorLocal {
                             segmentoMejor = segmentoCambiado;
                             costoSegmentoMejor = costoSegmentoCambiado;
                             costoMejor = costoAux + costoSegmentoCambiado;
-                            indiceMejorSegmento = corte;
 
+                            //  Guardo en la lista de costes el nuevo coste que ha mejorado el coste inicial
+                            costesMejoresSegmentos.set(corte, costoSegmentoMejor);
+
+                            // Guardo en la lista de segmentos ese segmento que ha dado mejor resultado
+                            listaMejoresSegmentos.add(corte, segmentoMejor);
                         }
                     }
                 }
@@ -89,14 +96,28 @@ public class Operador2Opt implements OperadorLocal {
                 // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorcosto
                 if (hayMejora) {
                     segmentoActual = segmentoMejor;
+                    // Si hay mejora, entonces aceptamos una solucion nueva
+                    numAceptaciones++;
                 }
+            }
+            // Ya no hay mejoras para el segmento[n], tengo que ver la diferencia de costes entre el segmento inicial y el segmento mejor conseguido para ese corte
+            // y evaluar para ver cual es el indice que nos da mejor resultado
+            diferencia = costoSegmento -  costesMejoresSegmentos.get(corte);
+
+            if (diferencia > diferenciaMayor) {
+                diferenciaMayor = diferencia;
+                indiceMejorSegmento = corte;
             }
         }
         // Comprobar que haya mejor solucion
         if (indiceMejorSegmento != -1) {
-            solucionMejor.setCosto(costoMejor);
-            solucionMejor.setSegmento(indiceMejorSegmento, segmentoMejor);
+            double costoSinSegmentoACambiar = solucionInicial.getCosto() - evaluador.evaluarSegmento(solucionInicial.getRuta().get(indiceMejorSegmento));
+            double costoSegmentoACambiar = evaluador.evaluarSegmento(listaMejoresSegmentos.get(indiceMejorSegmento));
+            solucionMejor.setCosto(costoSinSegmentoACambiar + costoSegmentoACambiar);
+            solucionMejor.setSegmento(indiceMejorSegmento, listaMejoresSegmentos.get(indiceMejorSegmento));
         }
+
+        //System.out.println(numAceptaciones);
         return solucionMejor;
     }
 

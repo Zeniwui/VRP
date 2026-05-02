@@ -22,10 +22,31 @@ public class ImplementacionSolomon {
         OperadorOrOpt operadorOrOpt = new OperadorOrOpt(evaluadorSoluciones);
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);
 
-        // Generamos 30 permutaciones distintas
+        // Generamos una permutacion aleatoria
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
+        List<Integer> permutacionInicial = generadorPermutaciones.aleatoria();
+        System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
+
+        // Evaluamos la permutacion aleatoria generada
+        Solucion solucionInicial = evaluadorSoluciones.evaluarCompleto(permutacionInicial);
+        System.out.println("Solucion de la permutacion aleatoria inicial: " + solucionInicial);
+
+        // Generamos la solucion optima aplicando el operador 2-opt
+        System.out.println("---------------------------------------------- OPERADOR 2-OPT -----------------------------------------------");
+        Solucion minimo2Opt = operador2Opt.generarMinimoLocal(solucionInicial);
+        System.out.println("Solucion minimo 2-opt partiendo de la permutacion aleatoria inicial: " + minimo2Opt);
+
+
+        System.out.println("---------------------------------------------- OPERADOR OR-OPT -----------------------------------------------");
+        Solucion minimoOrOpt = operadorOrOpt.generarMinimoLocal(solucionInicial);
+        System.out.println("Solucion minimo OR-opt partiendo de la permutacion aleatoria inicial: " + minimoOrOpt);
+
+
+        // Generamos 30 permutaciones distintas
+        //GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
         List<Solucion> listaSoluciones = evaluadorSoluciones.evaluarListaPermutaciones(listaPermutaciones);
+
 
         // Creamos un Experimentador
         Experimentador experimentador = new Experimentador();
