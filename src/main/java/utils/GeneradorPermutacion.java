@@ -5,10 +5,12 @@ import java.util.*;
 public class GeneradorPermutacion {
     private int dimension;
     private int semilla;
+    private Random random;
 
     public GeneradorPermutacion(int dimension, int semilla) {
         this.dimension = dimension;
         this.semilla = semilla;
+        this.random = new Random(semilla);
     }
 
     /**
@@ -22,8 +24,6 @@ public class GeneradorPermutacion {
             permutacion.add(i);
         }
 
-        Random random = new Random(semilla);
-
         Collections.shuffle(permutacion, random);
 
         return permutacion;
@@ -35,8 +35,6 @@ public class GeneradorPermutacion {
         List<List<Integer>> listaFinal = new ArrayList<>();
         // Generamos la permutacion base
         List<Integer> permutacionBase = new ArrayList<>();
-
-        Random random = new Random(semilla);
 
         for (int i = 1; i < dimension; i++) {
             permutacionBase.add(i);

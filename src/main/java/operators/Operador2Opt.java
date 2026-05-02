@@ -121,7 +121,7 @@ public class Operador2Opt implements OperadorLocal {
         //System.out.println(numAceptaciones);
         return solucionMejor;
     }
-
+    @Override
     public Solucion generarMinimoTodosSegmentos (Solucion solucionInicial) {
         Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
         double costoMejor = solucionInicial.getCosto();
@@ -193,10 +193,10 @@ public class Operador2Opt implements OperadorLocal {
                 }
             }
         }
-        System.out.println(listaMejoresSegmentos);
+        //System.out.println(listaMejoresSegmentos);
         solucionMejor.setCosto(evaluador.evaluarRutaCompleta(listaMejoresSegmentos));
 
-        //System.out.println(numAceptaciones);
+        //System.out.println("Numero aceptaciones: " + numAceptaciones);
         return solucionMejor;
     }
 

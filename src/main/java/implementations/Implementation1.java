@@ -6,9 +6,7 @@ import model.Solucion;
 import operators.Operador2Opt;
 import operators.OperadorOrOpt;
 import operators.OperadorSwap;
-import utils.EvaluadorTiempos;
-import utils.Experimentador;
-import utils.GeneradorPermutacion;
+import utils.*;
 
 import java.util.List;
 
@@ -17,18 +15,18 @@ public class Implementation1 {
     public void implementar(int semilla, int numPermutaciones) {
 
         // Cargamos los datos de entrada iniciales con los que trabajaremos
-        CargadorArchivos.cargarDatos("input.txt");
+        CargadorArchivos.cargarDatos("c101.txt");
 
         Input input = Input.getInstancia();
         input.mostrarDatosCargados();
 
-        // Generamos una permutacion aleatoria
-        GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
+       // Generamos una permutacion aleatoria
+        GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(30, semilla);
         List<Integer> permutacionInicial = generadorPermutaciones.aleatoria();
         System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
 
         // Evaluamos la permutacion aleatoria generada
-        EvaluadorTiempos evaluadorSoluciones = new EvaluadorTiempos(input);
+        Evaluador evaluadorSoluciones = new EvaluadorDistancias(input);
         Solucion solucionInicial = evaluadorSoluciones.evaluarCompleto(permutacionInicial);
         System.out.println("Solucion de la permutacion aleatoria inicial: " + solucionInicial);
 
@@ -46,17 +44,17 @@ public class Implementation1 {
         //Generamos la solucion optima aplicando el operador swap
         System.out.println("---------------------------------------------- OPERADOR SWAP -----------------------------------------------");
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);
-        Solucion minimoSwap = operadorSwap.generarMinimoLocal(solucionInicial);
+        Solucion minimoSwap = operadorSwap.generarMinimoTodosSegmentos(solucionInicial);
         System.out.println("Solucion minimo swap partiendo de la permutacion aleatoria inicial: " + minimoSwap);
 
         // Generamos 30 permutaciones distintas
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
-        List<Solucion> listaSoluciones = evaluadorSoluciones.evaluarListaPermutaciones(listaPermutaciones);
+        List<Solucion> listaSoluciones = ((EvaluadorDistancias) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
 
         // Creamos un Experimentador
         Experimentador experimentador = new Experimentador();
         //experimentador.ejecutarExperimento(operador2Opt, listaSoluciones);
         //experimentador.ejecutarExperimento(operadorOrOpt, listaSoluciones);
-        //experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);
+        //experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);*/
     }
 }

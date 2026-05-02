@@ -30,9 +30,9 @@ public class ImplementacionSolomon {
 
         // Creamos un Experimentador
         Experimentador experimentador = new Experimentador();
-        experimentador.ejecutarExperimento(operador2Opt, listaSoluciones);
-        experimentador.ejecutarExperimento(operadorOrOpt, listaSoluciones);
-        experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);
+        experimentador.ejecutarExperimentoSimple(operador2Opt, listaSoluciones);
+        experimentador.ejecutarExperimentoSimple(operadorOrOpt, listaSoluciones);
+        experimentador.ejecutarExperimentoSimple(operadorSwap, listaSoluciones);
 
     }
 

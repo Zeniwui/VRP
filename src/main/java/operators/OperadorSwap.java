@@ -41,6 +41,10 @@ public class OperadorSwap implements OperadorLocal{
     }
     @Override
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
+        return new Solucion(null, 3);
+    }
+    @Override
+    public Solucion generarMinimoTodosSegmentos(Solucion solucionInicial) {
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
         int tamanoRuta = solucionInicial.getRuta().size();
         double costoMejor = solucionInicial.getCosto();
@@ -114,5 +118,6 @@ public class OperadorSwap implements OperadorLocal{
 
         return solucionMejor;
     }
+
     public String getNombre() { return nombre; }
 }
