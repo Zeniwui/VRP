@@ -200,6 +200,84 @@ public class Operador2Opt implements OperadorLocal {
         return solucionMejor;
     }
 
+    public Solucion generarMinimoTodosSegmentos (Solucion solucionInicial) {
+        Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
+        double costoMejor = solucionInicial.getCosto();
+
+        List<Integer> segmentoActual, segmentoMejor = null, segmentoCambiado = null;
+        int numeroSegmentos = solucionInicial.getRuta().size();  //Numero de segmentos que tiene la rutaInicial de la que partimos
+        List<Double> costesMejoresSegmentos = new ArrayList<>(numeroSegmentos); // Array para guardar los mejores costes de cada segmento
+        List<List<Integer>> listaMejoresSegmentos = new ArrayList<>(numeroSegmentos); // Array para guardar los resultados de los mejores segmentos de cada corte
+        double costoSegmento, costoSegmentoCambiado,  costoSegmentoMejor, costoAux, diferencia, diferenciaMayor = 0;
+
+        boolean hayMejora;
+
+        int numAceptaciones = 0;
+
+        // Como la ruta inicial puede tener varios cortes (Ej: [[1, 2, 3], [4, 5, 6]]
+        // debemos aplicar el operador en cada segmento
+        for (int corte = 0; corte < numeroSegmentos; corte++) {
+            // Guardamos el segmento actual con el que estamos trabajando
+            segmentoActual = solucionInicial.getRuta().get(corte);
+            //System.out.println("Trabajando con segmento: " + segmentoActual);
+            // Guardamos el costo de recorrer ese segmento
+            costoSegmento = evaluador.evaluarSegmento(segmentoActual);
+            costesMejoresSegmentos.add(corte, costoSegmento);
+            listaMejoresSegmentos.add(segmentoActual);
+            // Guardo en una variable auxiliar el costo si quitamos el segmento actual con el que vamos a trabajar
+            // Utilizamos evaluacion delta para agilizar las operaciones y no tener que evaluar toda una ruta completa para conseguir el costo
+            costoAux = solucionInicial.getCosto() - costoSegmento;
+            costoSegmentoMejor = costoSegmento;
+
+            hayMejora = true;
+            // Bucle para encontrar el mínimo local
+            while (hayMejora) {
+                hayMejora = false;
+
+                //System.out.println("--- Generando vecinos ---");
+                //Bucle para encontrar todos los vecinos de un segmento inicial
+                for (int i = 0; i <= segmentoActual.size() - 2; i++) {
+                    for (int j = i + 1; j <= segmentoActual.size() - 1; j++) {
+                        // Aplicamos el intercambio 2-opt
+                        segmentoCambiado = aplicarCambio(segmentoActual, i, j);
+                        //System.out.println("Segmento cambiado: " + segmentoCambiado);
+                        // Calculamos el nuevo costo del segmento intercambiado
+                        costoSegmentoCambiado = evaluador.evaluarSegmento(segmentoCambiado);
+
+                        // Si el costo del segmento cambiado es mejor que el inicial, debemos guardarlo como posible solucion
+                        if (costoSegmentoCambiado < costoSegmentoMejor) {
+                            hayMejora = true;
+                            segmentoMejor = segmentoCambiado;
+                            costoSegmentoMejor = costoSegmentoCambiado;
+                            costoMejor = costoAux + costoSegmentoCambiado;
+
+                            //  Guardo en la lista de costes el nuevo coste que ha mejorado el coste inicial
+                            costesMejoresSegmentos.set(corte, costoSegmentoMejor);
+
+                            // Guardo en la lista de segmentos ese segmento que ha dado mejor resultado
+                            listaMejoresSegmentos.set(corte, segmentoMejor);
+                        }
+                    }
+                }
+                //System.out.println("--- Todos los vecinos generados ---");
+                // Una vez hemos encontrado todos los vecinos del segmento inicial, nos tenemos que quedar con el de mejor resultado
+                // Y debemos entonces generar los vecinos de esta nueva solucion
+                // El segmento actual con el que tenemos que trabajar será el que diga el indiceMejorcosto
+                if (hayMejora) {
+                    segmentoActual = segmentoMejor;
+                    solucionMejor.setSegmento(corte, listaMejoresSegmentos.get(corte));
+                    // Si hay mejora, entonces aceptamos una solucion nueva
+                    numAceptaciones++;
+                }
+            }
+        }
+        System.out.println(listaMejoresSegmentos);
+        solucionMejor.setCosto(evaluador.evaluarRutaCompleta(listaMejoresSegmentos));
+
+        //System.out.println(numAceptaciones);
+        return solucionMejor;
+    }
+
     public List<Solucion> getHistorial() {
         return historial;
     }
