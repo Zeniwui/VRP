@@ -1,5 +1,6 @@
 package implementations;
 
+import io.CargadorArchivos;
 import model.Input;
 import model.Solucion;
 import operators.Operador2Opt;
@@ -16,8 +17,9 @@ public class Implementation1 {
     public void implementar(int semilla, int numPermutaciones) {
 
         // Cargamos los datos de entrada iniciales con los que trabajaremos
+        CargadorArchivos.cargarDatos("input.txt");
+
         Input input = Input.getInstancia();
-        input.cargarDatosMios("input.txt");
         input.mostrarDatosCargados();
 
         // Generamos una permutacion aleatoria

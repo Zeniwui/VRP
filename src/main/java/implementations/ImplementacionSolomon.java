@@ -1,5 +1,6 @@
 package implementations;
 
+import io.CargadorArchivos;
 import model.Input;
 import model.Solucion;
 import operators.Operador2Opt;
@@ -11,9 +12,10 @@ import java.util.List;
 
 public class ImplementacionSolomon {
     public void implementar(int semilla, int numPermutaciones) {
+        CargadorArchivos.cargarDatos("c101.txt");
+
         Input input = Input.getInstancia();
-        input.cargarDatosSolomon("c201.txt");
-        input.mostrarDatosCargadosSolomon();
+        input.mostrarDatosCargados();
 
         EvaluadorDistancias evaluadorSoluciones = new EvaluadorDistancias(input);
         Operador2Opt operador2Opt = new Operador2Opt(evaluadorSoluciones);
@@ -32,4 +34,5 @@ public class ImplementacionSolomon {
         experimentador.ejecutarExperimento(operadorSwap, listaSoluciones);
 
     }
+
 }
