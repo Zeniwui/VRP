@@ -10,4 +10,5 @@ public interface Evaluador {
     boolean suficienteCapacidadParaCubrirSegmento(List<Integer> segmento);
     Solucion evaluarCompleto(List<Integer> permutacion);
     double costoEntre(int i, int j);
+    double[][] getMatrizCostes();
 }

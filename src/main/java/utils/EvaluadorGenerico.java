@@ -103,4 +103,5 @@ public class EvaluadorGenerico implements Evaluador {
     public double costoEntre(int i, int j) {
         return matrizCostes[i][j];
     }
+    public double[][] getMatrizCostes() { return matrizCostes; }
 }

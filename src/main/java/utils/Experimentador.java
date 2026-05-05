@@ -3,6 +3,7 @@ package utils;
 import metaheuristics.MultiStart;
 import model.Solucion;
 import operators.OperadorLocal;
+import operators.OperadorSplit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,25 @@ public class Experimentador {
         estadisticas.calcularBasico();
     }
 
+    public void ejecutarSplit(OperadorSplit operadorSplit, List<List<Integer>> listaPermutacionesIniciales) {
+        List<Solucion> resultados = new ArrayList<>();
+        long tiempoInicio, tiempoFin;
+        double tiempoCPU_ms;
+
+        int numIteraciones = listaPermutacionesIniciales.size();
+
+        tiempoInicio = System.nanoTime();
+        for (int i = 0; i < numIteraciones; i++) {
+            resultados.add(operadorSplit.generarMinimoTodosSegmentos(listaPermutacionesIniciales.get(i)));
+        }
+        tiempoFin = System.nanoTime();
+        tiempoCPU_ms = (tiempoFin - tiempoInicio) / 1_000_000.0;
+
+        System.out.println("============================================================================================");
+        System.out.printf("Tiempo ejecución %s %d repeticiones: %f ms\n", operadorSplit.getNombre(), numIteraciones, tiempoCPU_ms);
+        Estadisticas estadisticas = new Estadisticas(resultados);
+        estadisticas.calcularBasico();
+    }
     public void ejecutarMultiStart(OperadorLocal operador, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion) {
         List<Solucion> resultados = new ArrayList<>();
         long tiempoInicio, tiempoFin;
