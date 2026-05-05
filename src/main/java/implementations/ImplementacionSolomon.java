@@ -17,7 +17,7 @@ public class ImplementacionSolomon {
         Input input = Input.getInstancia();
         input.mostrarDatosCargados();
 
-        EvaluadorDistancias evaluadorSoluciones = new EvaluadorDistancias(input);
+        Evaluador evaluadorSoluciones = new EvaluadorGenerico(input.getDistancias(), input);
         Operador2Opt operador2Opt = new Operador2Opt(evaluadorSoluciones);
         OperadorOrOpt operadorOrOpt = new OperadorOrOpt(evaluadorSoluciones);
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);
@@ -25,7 +25,7 @@ public class ImplementacionSolomon {
         // Generamos 30 permutaciones distintas
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
-        List<Solucion> listaSoluciones = evaluadorSoluciones.evaluarListaPermutaciones(listaPermutaciones);
+        List<Solucion> listaSoluciones = ((EvaluadorGenerico) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
 
 
         // Creamos un Experimentador

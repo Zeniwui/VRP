@@ -26,7 +26,7 @@ public class Implementation1 {
         System.out.println("Permutación aleatoria inicial: " + permutacionInicial);
 
         // Evaluamos la permutacion aleatoria generada
-        Evaluador evaluadorSoluciones = new EvaluadorDistancias(input);
+        Evaluador evaluadorSoluciones = new EvaluadorGenerico(input.getDistancias(), input);
         Solucion solucionInicial = evaluadorSoluciones.evaluarCompleto(permutacionInicial);
         System.out.println("Solucion de la permutacion aleatoria inicial: " + solucionInicial);
 
@@ -49,7 +49,7 @@ public class Implementation1 {
 
         // Generamos 30 permutaciones distintas
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
-        List<Solucion> listaSoluciones = ((EvaluadorDistancias) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
+        List<Solucion> listaSoluciones = ((EvaluadorGenerico) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
 
         // Creamos un Experimentador
         Experimentador experimentador = new Experimentador();

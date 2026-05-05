@@ -6,7 +6,8 @@ import model.Solucion;
 import operators.Operador2Opt;
 import operators.OperadorOrOpt;
 import operators.OperadorSwap;
-import utils.EvaluadorDistancias;
+import utils.Evaluador;
+import utils.EvaluadorGenerico;
 import utils.Experimentador;
 import utils.GeneradorPermutacion;
 
@@ -20,7 +21,7 @@ public class ImplementacionTSPLIB {
         Input input = Input.getInstancia();
         input.mostrarDatosCargados();
 
-        EvaluadorDistancias evaluadorSoluciones = new EvaluadorDistancias(input);
+        Evaluador evaluadorSoluciones = new EvaluadorGenerico(input.getDistancias(), input);
         Operador2Opt operador2Opt = new Operador2Opt(evaluadorSoluciones);
         OperadorOrOpt operadorOrOpt = new OperadorOrOpt(evaluadorSoluciones);
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);

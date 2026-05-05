@@ -6,6 +6,7 @@ import model.Solucion;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class EvaluadorDistancias implements Evaluador{
     private int dimension;
     private int capacidad;
@@ -121,6 +122,11 @@ public class EvaluadorDistancias implements Evaluador{
         }
 
         return true;
+    }
+
+    @Override
+    public double costoEntre(int i, int j) {
+        return distancias[i][j];
     }
 }
 

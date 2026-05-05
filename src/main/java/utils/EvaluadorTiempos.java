@@ -6,6 +6,7 @@ import model.Solucion;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class EvaluadorTiempos implements  Evaluador{
     private int dimension;
     private int capacidad;
@@ -122,5 +123,10 @@ public class EvaluadorTiempos implements  Evaluador{
         }
 
         return true;
+    }
+
+    @Override
+    public double costoEntre(int i, int j) {
+        return tiempos[i][j];
     }
 }

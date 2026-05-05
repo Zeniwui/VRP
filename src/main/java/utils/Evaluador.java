@@ -9,4 +9,5 @@ public interface Evaluador {
     double evaluarSegmento(List<Integer> segmento);
     boolean suficienteCapacidadParaCubrirSegmento(List<Integer> segmento);
     Solucion evaluarCompleto(List<Integer> permutacion);
+    double costoEntre(int i, int j);
 }
