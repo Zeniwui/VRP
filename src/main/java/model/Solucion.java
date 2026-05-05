@@ -1,5 +1,6 @@
 package model;
 
+import javax.print.attribute.IntegerSyntax;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,12 @@ public class Solucion {
 
     @Override
     public String toString() {
-        return "Costo: " + String.format("%.2f", costo)
-                + " // ruta: " + rutas.toString() + "\n";
+        String string = "";
+        string += "Costo: " + String.format("%.2f", costo) + "\n";
+        for (List<Integer> subruta: rutas) {
+            string += subruta.toString() + "\n";
+        }
+        return string;
     }
 
     public double getCosto() {

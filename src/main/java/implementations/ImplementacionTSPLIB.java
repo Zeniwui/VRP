@@ -10,11 +10,12 @@ import utils.EvaluadorDistancias;
 import utils.Experimentador;
 import utils.GeneradorPermutacion;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ImplementacionTSPLIB {
     public void implementar(int semilla, int numPermutaciones) {
-        CargadorArchivos.cargarDatos("CMT1.vrp");
+        CargadorArchivos.cargarDatos("CMT3.vrp");
 
         Input input = Input.getInstancia();
         input.mostrarDatosCargados();
@@ -26,6 +27,36 @@ public class ImplementacionTSPLIB {
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
         Experimentador experimentador = new Experimentador();
 
+
+/*        List<List<Integer>> listaDeRutas = Arrays.asList(
+                Arrays.asList(92, 37, 98, 100, 91, 16, 86, 38, 44, 14, 42, 43, 15, 57, 2, 58),
+                Arrays.asList(6, 96, 99, 59, 93, 85, 61, 17, 45, 84, 5, 60, 89),
+                Arrays.asList(27, 69, 1, 70, 30, 20, 66, 32, 90, 63, 10, 62, 88, 31),
+                Arrays.asList(21, 72, 75, 56, 39, 67, 23, 41, 22, 74, 73, 40),
+                Arrays.asList(18, 83, 8, 46, 47, 36, 49, 64, 11, 19, 48, 82, 7, 52),
+                Arrays.asList(94, 95, 97, 87, 13),
+                Arrays.asList(28, 12, 80, 68, 29, 24, 54, 55, 25, 4, 26, 53),
+                Arrays.asList(76, 77, 3, 79, 78, 34, 35, 65, 71, 9, 51, 81, 33, 50)
+        );
+
+        Solucion solucionInicial = new Solucion(listaDeRutas, evaluadorSoluciones.evaluarRutaCompleta(listaDeRutas));
+        System.out.println("Solucion de la permutacion aleatoria inicial: " + solucionInicial);
+
+        System.out.println("---------------------------------------------- OPERADOR 2-OPT -----------------------------------------------");
+        Solucion minimo2Opt = operador2Opt.generarMinimoTodosSegmentos(solucionInicial);
+        System.out.println("Solucion minimo 2-opt partiendo de la permutacion aleatoria inicial: " + minimo2Opt);
+
+        System.out.println("---------------------------------------------- OPERADOR OR-OPT -----------------------------------------------");
+        Solucion minimoOrOpt = operadorOrOpt.generarMinimoLocal(solucionInicial);
+        System.out.println("Solucion minimo OR-opt partiendo de la permutacion aleatoria inicial: " + minimoOrOpt);
+
+        //Generamos la solucion optima aplicando el operador swap
+        System.out.println("---------------------------------------------- OPERADOR SWAP -----------------------------------------------");
+        Solucion minimoSwap = operadorSwap.generarMinimoTodosSegmentos(solucionInicial);
+        System.out.println("Solucion minimo swap partiendo de la permutacion aleatoria inicial: " + minimoSwap);*/
+
+
+
 /*        // Generamos 30 permutaciones distintas
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
         List<Solucion> listaSoluciones = evaluadorSoluciones.evaluarListaPermutaciones(listaPermutaciones);
@@ -35,8 +66,8 @@ public class ImplementacionTSPLIB {
         experimentador.ejecutarExperimentoSimple(operadorOrOpt, listaSoluciones);
         experimentador.ejecutarExperimentoSimple(operadorSwap, listaSoluciones);*/
 
-        experimentador.ejecutarMultiStart(operador2Opt, 30, evaluadorSoluciones, generadorPermutaciones);
+       /* experimentador.ejecutarMultiStart(operador2Opt, 30, evaluadorSoluciones, generadorPermutaciones);
         experimentador.ejecutarMultiStart(operadorOrOpt, 30, evaluadorSoluciones, generadorPermutaciones);
-        experimentador.ejecutarMultiStart(operadorSwap, 30, evaluadorSoluciones, generadorPermutaciones);
+        experimentador.ejecutarMultiStart(operadorSwap, 30, evaluadorSoluciones, generadorPermutaciones);*/
     }
 }
