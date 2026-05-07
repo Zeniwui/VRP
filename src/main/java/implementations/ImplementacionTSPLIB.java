@@ -70,8 +70,8 @@ public class ImplementacionTSPLIB {
         experimentador.ejecutarExperimentoSimple(operadorSwap, listaSoluciones);
         experimentador.ejecutarSplit(operadorSplit, listaPermutaciones);
 
-       /* experimentador.ejecutarMultiStart(operador2Opt, 30, evaluadorSoluciones, generadorPermutaciones);
+        experimentador.ejecutarMultiStart(operador2Opt, 30, evaluadorSoluciones, generadorPermutaciones);
         experimentador.ejecutarMultiStart(operadorOrOpt, 30, evaluadorSoluciones, generadorPermutaciones);
-        experimentador.ejecutarMultiStart(operadorSwap, 30, evaluadorSoluciones, generadorPermutaciones);*/
+        experimentador.ejecutarMultiStart(operadorSwap, 30, evaluadorSoluciones, generadorPermutaciones);
     }
 }
