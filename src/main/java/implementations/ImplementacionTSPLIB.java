@@ -12,12 +12,12 @@ import utils.EvaluadorGenerico;
 import utils.Experimentador;
 import utils.GeneradorPermutacion;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImplementacionTSPLIB {
     public void implementar(int semilla, int numPermutaciones) {
-        CargadorArchivos.cargarDatos("CMT3.vrp");
+        CargadorArchivos.cargarDatos("CMT1.vrp");
 
         Input input = Input.getInstancia();
         input.mostrarDatosCargados();
@@ -62,13 +62,18 @@ public class ImplementacionTSPLIB {
 
        // Generamos 30 permutaciones distintas
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
-        List<Solucion> listaSoluciones = ((EvaluadorGenerico) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
+
+        //List<Solucion> listaSoluciones = ((EvaluadorGenerico) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
+
+        List<Solucion> listaSoluciones = new ArrayList<>();
+        for (List<Integer> permutacion: listaPermutaciones) {
+            listaSoluciones.add(operadorSplit.generarSolucion(permutacion));
+        }
 
         // Creamos un Experimentador
         experimentador.ejecutarExperimentoSimple(operador2Opt, listaSoluciones);
         experimentador.ejecutarExperimentoSimple(operadorOrOpt, listaSoluciones);
         experimentador.ejecutarExperimentoSimple(operadorSwap, listaSoluciones);
-        experimentador.ejecutarSplit(operadorSplit, listaPermutaciones);
 
         experimentador.ejecutarMultiStart(operador2Opt, 30, evaluadorSoluciones, generadorPermutaciones);
         experimentador.ejecutarMultiStart(operadorOrOpt, 30, evaluadorSoluciones, generadorPermutaciones);

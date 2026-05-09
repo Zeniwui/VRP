@@ -4,7 +4,6 @@ import model.Input;
 import model.Solucion;
 import utils.Evaluador;
 
-import javax.print.attribute.IntegerSyntax;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class OperadorSplit{
     }
 
 
-    public Solucion generarMinimoTodosSegmentos(List<Integer> T) {
+    public Solucion generarSolucion(List<Integer> T) {
 
         List<List<Integer>> S = new ArrayList<>();
         int n = T.size();

@@ -40,7 +40,7 @@ public class Experimentador {
     public void ejecutarSplit(OperadorSplit operadorSplit, List<List<Integer>> listaPermutacionesIniciales) {
         ejecutarExperimento(operadorSplit.getNombre(), listaPermutacionesIniciales.size(), new GeneradorSolucion() {
             public Solucion generar(int i) {
-                return operadorSplit.generarMinimoTodosSegmentos(listaPermutacionesIniciales.get(i));
+                return operadorSplit.generarSolucion(listaPermutacionesIniciales.get(i));
             }
         });
     }
