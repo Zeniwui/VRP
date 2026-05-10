@@ -2,17 +2,12 @@ package implementations;
 
 import io.CargadorArchivos;
 import model.Input;
-import model.Solucion;
-import operators.Operador2Opt;
-import operators.OperadorOrOpt;
-import operators.OperadorSplit;
-import operators.OperadorSwap;
+import operators.*;
 import utils.Evaluador;
 import utils.EvaluadorGenerico;
 import utils.Experimentador;
 import utils.GeneradorPermutacion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImplementacionTSPLIB {
@@ -26,7 +21,8 @@ public class ImplementacionTSPLIB {
         Operador2Opt operador2Opt = new Operador2Opt(evaluadorSoluciones);
         OperadorOrOpt operadorOrOpt = new OperadorOrOpt(evaluadorSoluciones);
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);
-        OperadorSplit operadorSplit = new OperadorSplit(evaluadorSoluciones);
+        OperadorSplit split = new OperadorSplit(evaluadorSoluciones);
+        Combinacion combinacion = new Combinacion(operador2Opt, operadorOrOpt, operadorSwap, evaluadorSoluciones);
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
         Experimentador experimentador = new Experimentador();
 
@@ -63,20 +59,17 @@ public class ImplementacionTSPLIB {
        // Generamos 30 permutaciones distintas
         List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
 
-        //List<Solucion> listaSoluciones = ((EvaluadorGenerico) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
-
-        List<Solucion> listaSoluciones = new ArrayList<>();
-        for (List<Integer> permutacion: listaPermutaciones) {
-            listaSoluciones.add(operadorSplit.generarSolucion(permutacion));
-        }
+        boolean conSplit = true;
 
         // Creamos un Experimentador
-        experimentador.ejecutarExperimentoSimple(operador2Opt, listaSoluciones);
-        experimentador.ejecutarExperimentoSimple(operadorOrOpt, listaSoluciones);
-        experimentador.ejecutarExperimentoSimple(operadorSwap, listaSoluciones);
+        experimentador.ejecutarExperimentoSimple(operador2Opt, split, evaluadorSoluciones, listaPermutaciones, conSplit);
+        experimentador.ejecutarExperimentoSimple(operadorOrOpt, split, evaluadorSoluciones, listaPermutaciones, conSplit);
+        experimentador.ejecutarExperimentoSimple(operadorSwap, split, evaluadorSoluciones, listaPermutaciones, conSplit);
+        experimentador.ejecutarExperimentoSimple(combinacion, split, evaluadorSoluciones, listaPermutaciones, conSplit);
 
-        experimentador.ejecutarMultiStart(operador2Opt, 30, evaluadorSoluciones, generadorPermutaciones);
-        experimentador.ejecutarMultiStart(operadorOrOpt, 30, evaluadorSoluciones, generadorPermutaciones);
-        experimentador.ejecutarMultiStart(operadorSwap, 30, evaluadorSoluciones, generadorPermutaciones);
+        experimentador.ejecutarMultiStart(operador2Opt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit);
+        experimentador.ejecutarMultiStart(operadorOrOpt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit);
+        experimentador.ejecutarMultiStart(operadorSwap, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit);
+        experimentador.ejecutarMultiStart(combinacion, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit);
     }
 }

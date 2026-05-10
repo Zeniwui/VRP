@@ -29,10 +29,17 @@ public class Experimentador {
         new Estadisticas(resultados).calcularBasico();
     }
 
-    public void ejecutarExperimentoSimple(OperadorLocal operador, List<Solucion> listaSolucionesIniciales) {
-        ejecutarExperimento(operador.getNombre(), listaSolucionesIniciales.size(), new GeneradorSolucion() {
+    public void ejecutarExperimentoSimple(OperadorLocal operador, OperadorSplit split,
+                                          Evaluador evaluador, List<List<Integer>> listaPermutaciones, boolean conSplit) {
+        ejecutarExperimento(operador.getNombre(), listaPermutaciones.size(), new GeneradorSolucion() {
             public Solucion generar(int i) {
-                return operador.generarMinimoTodosSegmentos(listaSolucionesIniciales.get(i));
+                Solucion s;
+                if (conSplit) {
+                    s = split.generarSolucion(listaPermutaciones.get(i));
+                } else {
+                    s = evaluador.evaluarCompleto(listaPermutaciones.get(i));
+                }
+                return operador.generarMinimoTodosSegmentos(s);
             }
         });
     }
@@ -45,12 +52,12 @@ public class Experimentador {
         });
     }
 
-    public void ejecutarMultiStart(OperadorLocal operador, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion) {
-        MultiStart multiStart = new MultiStart(operador, evaluador, generadorPermutacion);
+    public void ejecutarMultiStart(OperadorLocal operador, OperadorSplit split, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion, boolean conSplit) {
+        MultiStart multiStart = new MultiStart(operador, split, evaluador, generadorPermutacion);
         System.out.println("------- MULTI START ------");
         ejecutarExperimento(operador.getNombre(), numIteraciones, new GeneradorSolucion() {
             public Solucion generar(int i) {
-                return multiStart.generarMejorSolucion(100);
+                return multiStart.generarMejorSolucion(100, conSplit);
             }
         });
     }

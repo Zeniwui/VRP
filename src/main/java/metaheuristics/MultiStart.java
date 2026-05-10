@@ -3,6 +3,7 @@ package metaheuristics;
 import model.Input;
 import model.Solucion;
 import operators.OperadorLocal;
+import operators.OperadorSplit;
 import utils.Evaluador;
 import utils.GeneradorPermutacion;
 
@@ -13,13 +14,15 @@ public class MultiStart {
     private OperadorLocal operador;
     private Evaluador evaluador;
     private GeneradorPermutacion generador;
-    public MultiStart(OperadorLocal operador, Evaluador evaluador, GeneradorPermutacion generador) {
+    private OperadorSplit split;
+    public MultiStart(OperadorLocal operador, OperadorSplit split, Evaluador evaluador, GeneradorPermutacion generador) {
         this.operador = operador;
         this.evaluador = evaluador;
         this.generador = generador;
+        this.split = split;
     }
 
-    public Solucion generarMejorSolucion(int numIteraciones) {
+    public Solucion generarMejorSolucion(int numIteraciones, boolean conSplit) {
         Solucion mejorSolucion, solucionInicial, minimoLocal;
         List<Integer> permutacion;
 
@@ -32,8 +35,12 @@ public class MultiStart {
             // Generamos permutacion aleatoria
             permutacion = generador.aleatoria();
 
-            // Evaluamos la permutacion
-            solucionInicial = evaluador.evaluarCompleto(permutacion);
+            // Evaluamos la permutacion segun el boolean conSplit
+            if (conSplit) {
+                solucionInicial = split.generarSolucion(permutacion);
+            } else {
+                solucionInicial = evaluador.evaluarCompleto(permutacion);
+            }
 
             // Generamos minimoLocal
             minimoLocal = operador.generarMinimoTodosSegmentos(solucionInicial);

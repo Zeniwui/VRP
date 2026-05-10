@@ -28,11 +28,7 @@ public class ImplementacionSolomon {
         List<Solucion> listaSoluciones = ((EvaluadorGenerico) evaluadorSoluciones).evaluarListaPermutaciones(listaPermutaciones);
 
 
-        // Creamos un Experimentador
-        Experimentador experimentador = new Experimentador();
-        experimentador.ejecutarExperimentoSimple(operador2Opt, listaSoluciones);
-        experimentador.ejecutarExperimentoSimple(operadorOrOpt, listaSoluciones);
-        experimentador.ejecutarExperimentoSimple(operadorSwap, listaSoluciones);
+
 
     }
 
