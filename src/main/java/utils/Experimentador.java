@@ -5,6 +5,8 @@ import model.Solucion;
 import operators.OperadorLocal;
 import operators.OperadorSplit;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class Experimentador {
 
         double tiempoCPU_ms = (fin - inicio) / 1_000_000.0;
         System.out.println("============================================================================================");
-        System.out.printf("Tiempo ejecución %s %d repeticiones: %f ms\n", nombreOperador, numIteraciones, tiempoCPU_ms);
+        System.out.printf("Tiempo ejecucion %s %d repeticiones: %f ms\n", nombreOperador, numIteraciones, tiempoCPU_ms);
         new Estadisticas(resultados).calcularBasico();
     }
 
@@ -44,6 +46,26 @@ public class Experimentador {
                 return operador.generarMinimoTodosSegmentos(s);
             }
         });
+    }
+
+    public void ejecutarExperimentoConCSV(OperadorLocal operador, OperadorSplit split,
+                                          Evaluador evaluador, List<Integer> permutacion, String nombreInstancia) {
+        String operadorNombre = operador.getNombre().replace(" ", "_");
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String nombreArchivo = "resultados_" + nombreInstancia.replace(".vrp", "").replace(".txt", "") + "_" + operadorNombre + "_" + timestamp + ".csv";
+
+        ExportadorCSV exportador = new ExportadorCSV();
+        exportador.setNombreArchivo(nombreArchivo);
+
+        operador.setExportador(exportador, nombreInstancia, "", false);
+        Solucion inicialSinSplit = evaluador.evaluarCompleto(permutacion);
+        operador.generarMinimoTodosSegmentos(inicialSinSplit);
+
+        operador.setExportador(exportador, nombreInstancia, "", true);
+        Solucion inicialConSplit = split.generarSolucion(permutacion);
+        operador.generarMinimoTodosSegmentos(inicialConSplit);
+
+        exportador.exportar();
     }
 
     public void ejecutarSplit(OperadorSplit operadorSplit, List<List<Integer>> listaPermutacionesIniciales) {

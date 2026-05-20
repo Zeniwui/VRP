@@ -6,6 +6,7 @@ import operators.OperadorLocal;
 import operators.OperadorOrOpt;
 import operators.OperadorSwap;
 import utils.Evaluador;
+import utils.ExportadorCSV;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,10 @@ public class Combinacion implements OperadorLocal {
     OperadorOrOpt operadorOrOpt;
     OperadorSwap operadorSwap;
     Evaluador evaluador;
+    private ExportadorCSV exportador;
+    private String instancia;
+    private String permutacion;
+    private boolean conSplit;
 
     public Combinacion(Operador2Opt op1, OperadorOrOpt op2, OperadorSwap op3, Evaluador ev) {
         operador2Opt = op1;
@@ -24,10 +29,24 @@ public class Combinacion implements OperadorLocal {
         evaluador = ev;
     }
 
+    @Override
+    public void setExportador(ExportadorCSV exportador, String instancia, String permutacion, boolean conSplit) {
+        this.exportador = exportador;
+        this.instancia = instancia;
+        this.permutacion = permutacion;
+        this.conSplit = conSplit;
+    }
+
     public Solucion generarMinimoTodosSegmentos(Solucion solucionInicial) {
+        long inicio = System.nanoTime();
+        int iteracion = 0;
         int contador2Opt = 0;
         int contadorOrOpt = 0;
         int contadorSwap = 0;
+
+        if (exportador != null) {
+            exportador.registrar(iteracion, 0.0, solucionInicial.getCosto(), "Combinacion", instancia, solucionInicial.getRuta().toString(), conSplit);
+        }
 
         Solucion solucionActual = new Solucion(solucionInicial);
         boolean hayMejora = true;
@@ -62,17 +81,18 @@ public class Combinacion implements OperadorLocal {
             if (nuevaSolucion != null) {
                 solucionActual = nuevaSolucion;
                 hayMejora = true;
+                iteracion++;
                 switch (operadorGanador) {
                     case "2-opt": contador2Opt++; break;
                     case "or-opt": contadorOrOpt++; break;
                     case "swap": contadorSwap++; break;
                 }
+                if (exportador != null) {
+                    double tiempo = (System.nanoTime() - inicio) / 1_000.0;
+                    exportador.registrar(iteracion, tiempo, mejorCosto, operadorGanador, instancia, solucionActual.getRuta().toString(), conSplit);
+                }
             }
         }
-
-        /*System.out.println("Aceptaciones 2-opt: " + contador2Opt);
-        System.out.println("Aceptaciones OR-opt: " + contadorOrOpt);
-        System.out.println("Aceptaciones swap: " + contadorSwap);*/
 
         return solucionActual;
     }
