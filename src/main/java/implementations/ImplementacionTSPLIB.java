@@ -70,9 +70,9 @@ public class ImplementacionTSPLIB {
 
         // Experimento con CSV para una sola permutación
         List<Integer> permutacionIndividual = generadorPermutaciones.aleatoria();
-/*        experimentador.ejecutarExperimentoConCSV(operador2Opt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
+        experimentador.ejecutarExperimentoConCSV(operador2Opt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
         experimentador.ejecutarExperimentoConCSV(operadorOrOpt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-        experimentador.ejecutarExperimentoConCSV(operadorSwap, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);*/
+        experimentador.ejecutarExperimentoConCSV(operadorSwap, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
         experimentador.ejecutarExperimentoConCSV(combinacion, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
 
 /*        experimentador.ejecutarMultiStart(operador2Opt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit);
