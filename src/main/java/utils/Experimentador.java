@@ -48,6 +48,35 @@ public class Experimentador {
         });
     }
 
+    public void ejecutarExperimentoSimpleConCSV(OperadorLocal operador, OperadorSplit split,
+                                                Evaluador evaluador, List<List<Integer>> listaPermutaciones, boolean conSplit, String nombreInstancia) {
+        ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
+
+        List<Solucion> resultados = new ArrayList<>();
+
+        long inicio = System.nanoTime();
+        for (int i = 0; i < listaPermutaciones.size(); i++) {
+            List<Integer> permutacion = listaPermutaciones.get(i);
+            Solucion s;
+            if (conSplit) {
+                s = split.generarSolucion(permutacion);
+            } else {
+                s = evaluador.evaluarCompleto(permutacion);
+            }
+            Solucion solucionFinal = operador.generarMinimoTodosSegmentos(s);
+            resultados.add(solucionFinal);
+
+            exportador.registrarDetalle(permutacion.toString(), solucionFinal.getRuta().toString(), solucionFinal.getCosto());
+        }
+        long fin = System.nanoTime();
+        double tiempoTotalMs = (fin - inicio) / 1_000_000.0;
+
+        exportador.exportar(operador.getNombre(), nombreInstancia, conSplit, true, false, tiempoTotalMs);
+
+        System.out.printf("Tiempo ejecucion %s %d repeticiones: %f ms\n", operador.getNombre(), listaPermutaciones.size(), tiempoTotalMs);
+        new Estadisticas(resultados).calcularBasico();
+    }
+
     public void ejecutarExperimentoConCSV(OperadorLocal operador, OperadorSplit split,
                                           Evaluador evaluador, List<Integer> permutacion, String nombreInstancia) {
         String operadorNombre = operador.getNombre().replace(" ", "_");
@@ -84,6 +113,29 @@ public class Experimentador {
                 return multiStart.generarMejorSolucion(numSolucionesInicialesMultiStart, conSplit);
             }
         });
+    }
+
+    public void ejecutarMultiStartConCSV(OperadorLocal operador, OperadorSplit split, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion, boolean conSplit, String nombreInstancia) {
+        MultiStart multiStart = new MultiStart(operador, split, evaluador, generadorPermutacion);
+        ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
+
+        List<Solucion> resultados = new ArrayList<>();
+
+        System.out.println("------- MULTI START (con CSV) ------");
+        long inicio = System.nanoTime();
+        for (int i = 0; i < numIteraciones; i++) {
+            Solucion solucionFinal = multiStart.generarMejorSolucion(numSolucionesInicialesMultiStart, conSplit);
+            resultados.add(solucionFinal);
+
+            exportador.registrarSoloRuta(solucionFinal.getRuta().toString(), solucionFinal.getCosto());
+        }
+        long fin = System.nanoTime();
+        double tiempoTotalMs = (fin - inicio) / 1_000_000.0;
+
+        exportador.exportar(operador.getNombre(), nombreInstancia, conSplit, false, true, tiempoTotalMs);
+
+        System.out.printf("Tiempo ejecucion %s %d repeticiones: %f ms\n", operador.getNombre(), numIteraciones, tiempoTotalMs);
+        new Estadisticas(resultados).calcularBasico();
     }
 
 }
