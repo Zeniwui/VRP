@@ -3,6 +3,7 @@ package operators;
 import model.Input;
 import model.Solucion;
 import utils.Evaluador;
+import utils.ExportadorCSV;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,22 @@ public class OperadorSwap implements OperadorLocal{
     private Evaluador evaluador;
     private Input input;
     private String nombre = "Swap";
+    private ExportadorCSV exportador;
+    private String instancia;
+    private String permutacion;
+    private boolean conSplit;
 
     public OperadorSwap(Evaluador evaluador) {
         this.evaluador = evaluador;
         input = Input.getInstancia();
+    }
+
+    @Override
+    public void setExportador(ExportadorCSV exportador, String instancia, String permutacion, boolean conSplit) {
+        this.exportador = exportador;
+        this.instancia = instancia;
+        this.permutacion = permutacion;
+        this.conSplit = conSplit;
     }
 
     /*
@@ -45,6 +58,13 @@ public class OperadorSwap implements OperadorLocal{
     }
     @Override
     public Solucion generarMinimoTodosSegmentos(Solucion solucionInicial) {
+        long inicio = System.nanoTime();
+        int iteracion = 0;
+
+        if (exportador != null) {
+            exportador.registrar(iteracion, 0.0, solucionInicial.getCosto(), nombre, instancia, solucionInicial.getRuta().toString(), conSplit);
+        }
+
         List<List<Integer>> rutaActual = solucionInicial.getRuta();
         int tamanoRuta = solucionInicial.getRuta().size();
         double costoMejor = solucionInicial.getCosto();
@@ -58,21 +78,15 @@ public class OperadorSwap implements OperadorLocal{
         double costoRutaActual;
         boolean hayMejora = true;
 
-        // Bucle para encontrar el minimo local
         while (hayMejora) {
             hayMejora = false;
             costoRutaActual = evaluador.evaluarRutaCompleta(rutaActual);
-            //System.out.println("--- Generando vecinos ---");
-            // Itero por todos los segmentos que componen la ruta
             for (int i = 0; i < tamanoRuta - 1; i++) {
                 for (int j = i + 1; j < tamanoRuta; j++) {
                     segmentosACambiar.clear();
                     segmentosACambiar.add(rutaActual.get(i));
                     segmentosACambiar.add(rutaActual.get(j));
 
-                    //System.out.println("Segmentos a cambiar: " + segmentosACambiar);
-
-                    // Una vez elegidos los segmentos, tendremos que iterar por todos los nodos que los componen para aplicarles el swap
                     segmento1 = new ArrayList<>(segmentosACambiar.get(0));
                     costoSeg1 = evaluador.evaluarSegmento(segmento1);
                     segmento2 = new ArrayList<>(segmentosACambiar.get(1));
@@ -82,24 +96,16 @@ public class OperadorSwap implements OperadorLocal{
 
                     for (int k = 0; k < segmento1.size(); k++) {
                         for (int l = 0; l < segmento2.size(); l++) {
-                            // Aplico el swap
                             segmentosCambiados = aplicarCambio(segmentosACambiar, k, l);
-                            //System.out.println("Segmentos cambiados: " + segmentosCambiados);
-                            // Si los nodos se pueden intercambiar, calculamos nuevos costos
                             if (segmentosCambiados != null) {
                                 costoNuevo1 = evaluador.evaluarSegmento(segmentosCambiados.get(0));
                                 costoNuevo2 = evaluador.evaluarSegmento(segmentosCambiados.get(1));
                                 costoNuevoTotal = costoAux + costoNuevo1 + costoNuevo2;
 
-                                // Si el nuevo costo es mejor que el que teniamos, tenemos que guardar la solucion
                                 if (costoNuevoTotal < costoMejor) {
-                                    // Hemos encontrado una mejora
                                     hayMejora = true;
-                                    // Actualizamos el mejor costo
                                     costoMejor = costoNuevoTotal;
-                                    // Antes que poner la ruta en la solucion la actualizamos por si hubo cambios anteriores
                                     solucionMejor.copiarRuta(rutaActual);
-                                    // En la solucion mejor introducimos los segmentos cambiados que nos proporcionaron mejor resultado
                                     solucionMejor.setSegmento(i, segmentosCambiados.get(0));
                                     solucionMejor.setSegmento(j, segmentosCambiados.get(1));
                                     solucionMejor.setCosto(costoNuevoTotal);
@@ -109,11 +115,14 @@ public class OperadorSwap implements OperadorLocal{
                     }
                 }
             }
-            // Una vez que he generado todos los vecinos, tengo que trabajar con el mejor vecino
-            // TODO: si vuelvo a iterar por todos los segmentos, estare repitiendo pruebas que ya he hecho. porque con el swap solo intercambio dos segmentos
-            // TODO: en un futuro, optimizar para solo iterar haciendo swap con los segmentos que cambiaron
             rutaActual = solucionMejor.getRuta();
-            //System.out.println("---- Todos los vecinos generados ----");
+            if (hayMejora) {
+                iteracion++;
+                if (exportador != null) {
+                    double tiempo = (System.nanoTime() - inicio) / 1_000.0;
+                    exportador.registrar(iteracion, tiempo, costoMejor, nombre, instancia, solucionMejor.getRuta().toString(), conSplit);
+                }
+            }
         }
 
         return solucionMejor;

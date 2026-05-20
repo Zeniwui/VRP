@@ -3,6 +3,7 @@ package operators;
 import model.Input;
 import model.Solucion;
 import utils.Evaluador;
+import utils.ExportadorCSV;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,21 @@ public class OperadorOrOpt implements OperadorLocal{
 
     private Evaluador evaluador;
     private String nombre = "OR-opt";
+    private ExportadorCSV exportador;
+    private String instancia;
+    private String permutacion;
+    private boolean conSplit;
 
     public OperadorOrOpt(Evaluador evaluador) {
         this.evaluador = evaluador;
+    }
+
+    @Override
+    public void setExportador(ExportadorCSV exportador, String instancia, String permutacion, boolean conSplit) {
+        this.exportador = exportador;
+        this.instancia = instancia;
+        this.permutacion = permutacion;
+        this.conSplit = conSplit;
     }
     /*
      * Extrae una cadena de 2 clientes consecutivos de su posicion actual y la reinserta en la posicion marcada como v2
@@ -124,80 +137,94 @@ public class OperadorOrOpt implements OperadorLocal{
         //System.out.println(numAceptaciones);
         return solucionMejor;
     }
+    private String rutaCompletaString(List<List<Integer>> listaMejoresSegmentos, List<List<Integer>> solucionInicialRuta, int corteActual) {
+        List<List<Integer>> rutaCompleta = new ArrayList<>();
+        for (int c = 0; c < solucionInicialRuta.size(); c++) {
+            if (c < listaMejoresSegmentos.size()) {
+                rutaCompleta.add(listaMejoresSegmentos.get(c));
+            } else {
+                rutaCompleta.add(solucionInicialRuta.get(c));
+            }
+        }
+        return rutaCompleta.toString();
+    }
+
     @Override
     public Solucion generarMinimoTodosSegmentos (Solucion solucionInicial) {
+        long inicio = System.nanoTime();
+        int iteracion = 0;
+
+        if (exportador != null) {
+            exportador.registrar(iteracion, 0.0, solucionInicial.getCosto(), nombre, instancia, solucionInicial.getRuta().toString(), conSplit);
+        }
+
         Solucion solucionMejor = new Solucion(new ArrayList<>(solucionInicial.getRuta()), solucionInicial.getCosto());
         double costoMejor = solucionInicial.getCosto();
+        double costoActualGlobal = solucionInicial.getCosto();
 
         List<Integer> segmentoActual, segmentoMejor = null, segmentoCambiado = null;
         int numeroSegmentos = solucionInicial.getRuta().size();
-        List<Double> costesMejoresSegmentos = new ArrayList<>(numeroSegmentos); // Array para guardar los mejores costes de cada segmento
-        List<List<Integer>> listaMejoresSegmentos = new ArrayList<>(new ArrayList<>()); // Array para guardar los resultados de los mejores segmentos de cada corte
+        List<Double> costesMejoresSegmentos = new ArrayList<>(numeroSegmentos);
+        List<List<Integer>> listaMejoresSegmentos = new ArrayList<>(numeroSegmentos);
         double costoSegmento, costoSegmentoCambiado, costoSegmentoMejor, costoAux, diferencia, diferenciaMayor = 0;
 
         boolean hayMejora;
 
         int numAceptaciones = 0;
 
-        // Tenemos que iterar por todos los segmentos que componen la ruta inicial
         for (int corte = 0; corte < numeroSegmentos; corte++) {
-            // Segmento con el que trabajamos
             segmentoActual = solucionInicial.getRuta().get(corte);
-            //System.out.println("Trabajando con segmento: " + segmentoActual);
-            // costo de recorrer ese segmento
             costoSegmento = evaluador.evaluarSegmento(segmentoActual);
             costesMejoresSegmentos.add(corte, costoSegmento);
             listaMejoresSegmentos.add(segmentoActual);
             costoSegmentoMejor = costoSegmento;
-            costoAux = solucionInicial.getCosto() - costoSegmento;
+            costoAux = costoActualGlobal - costoSegmento;
 
             hayMejora = true;
             while (hayMejora) {
                 hayMejora = false;
 
-                //System.out.println("--- Generando vecinos ---");
-                // En cada segmento, aplicamos el cambio
                 for (int i = 0; i < segmentoActual.size() - 1; i++) {
                     for (int j = 0; j < segmentoActual.size(); j++) {
 
                         if (( j == i) || (j == i + 1)) {
                             continue;
                         }
-                        // Aplicamos el cambio
                         segmentoCambiado = aplicarCambio(segmentoActual, i, j);
-                        //System.out.println("Segmento cambiado: " + segmentoCambiado);
-                        // Evaluamos el costo del segmento cambiado
                         costoSegmentoCambiado = evaluador.evaluarSegmento(segmentoCambiado);
-                        //System.out.println("costo segmento cambiado: "  + costoSegmentoCambiado);
 
                         if (costoSegmentoCambiado < costoSegmentoMejor) {
                             hayMejora = true;
+                            double costeAnterior = costoSegmentoMejor;
                             segmentoMejor = segmentoCambiado;
                             costoSegmentoMejor = costoSegmentoCambiado;
                             costoMejor = costoAux + costoSegmentoCambiado;
 
-                            //  Guardo en la lista de costes el nuevo coste que ha mejorado el coste inicial
                             costesMejoresSegmentos.set(corte, costoSegmentoMejor);
-
-                            // Guardo en la lista de segmentos ese segmento que ha dado mejor resultado
                             listaMejoresSegmentos.set(corte, segmentoMejor);
+
+                            costoActualGlobal += (costoSegmentoMejor - costeAnterior);
+                            costoAux = costoActualGlobal - costoSegmentoMejor;
+
+                            numAceptaciones++;
+                            iteracion++;
+
+                            if (exportador != null) {
+                                double tiempo = (System.nanoTime() - inicio) / 1_000.0;
+                                exportador.registrar(iteracion, tiempo, costoActualGlobal, nombre, instancia, rutaCompletaString(listaMejoresSegmentos, solucionInicial.getRuta(), corte), conSplit);
+                            }
                         }
                     }
                 }
-                //System.out.println("--- Todos los vecinos generados ---");
-                // Una vez generados todos los vecinos, nos quedamos con el mejor
                 if (hayMejora) {
                     segmentoActual = segmentoMejor;
                     solucionMejor.setSegmento(corte, listaMejoresSegmentos.get(corte));
-                    // Si hay mejora, entonces aceptamos una solucion nueva
-                    numAceptaciones++;
                 }
             }
         }
 
         solucionMejor.setCosto(evaluador.evaluarRutaCompleta(listaMejoresSegmentos));
 
-        //System.out.println(numAceptaciones);
         return solucionMejor;
     }
 
