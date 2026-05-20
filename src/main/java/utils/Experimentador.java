@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Experimentador {
 
+    private final int numSolucionesInicialesMultiStart = 100;
+
     private interface GeneradorSolucion {
         Solucion generar(int indice);
     }
@@ -57,7 +59,7 @@ public class Experimentador {
         System.out.println("------- MULTI START ------");
         ejecutarExperimento(operador.getNombre(), numIteraciones, new GeneradorSolucion() {
             public Solucion generar(int i) {
-                return multiStart.generarMejorSolucion(100, conSplit);
+                return multiStart.generarMejorSolucion(numSolucionesInicialesMultiStart, conSplit);
             }
         });
     }
