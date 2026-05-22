@@ -1,0 +1,5 @@
+Operador,Tiempo_Simple,Promedio_Simple,Desviacion_Simple,Mejor_Simple,Peor_Simple,Tiempo_Simple_conSplit,Promedio_Simple_conSplit,Desviacion_Simple_conSplit,Mejor_Simple_conSplit,Peor_Simple_conSplit,Tiempo_MultiStart,Promedio_MultiStart,Desviacion_MultiStart,Mejor_MultiStart,Peor_MultiStart,Tiempo_MultiStart_conSplit,Promedio_MultiStart_conSplit,Desviacion_MultiStart_conSplit,Mejor_MultiStart_conSplit,Peor_MultiStart_conSplit
+2-opt,,,,,,30.0477,1902.06,95.70,1729.38,2111.41,,,,,,621.5851,1676.44,39.66,1567.85,1741.80
+OR-opt,,,,,,38.2255,1981.80,91.90,1825.88,2158.49,,,,,,1306.3321,1769.19,22.82,1723.83,1809.16
+Swap,,,,,,1372.8389,1151.67,42.13,1082.72,1231.75,,,,,,97646.4142,1046.43,15.56,1018.93,1078.04
+Combinacion_2-opt_OR-opt_y_Swap,,,,,,1798.7065,1097.94,41.18,1034.38,1188.33,,,,,,166153.5122,994.11,17.60,955.09,1029.88

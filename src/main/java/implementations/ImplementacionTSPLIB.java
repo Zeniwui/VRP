@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ImplementacionTSPLIB {
     public void implementar(int semilla, int numPermutaciones) {
-        String nombreInstancia = "CMT2.vrp";
+        String nombreInstancia = "CMT5.vrp";
         CargadorArchivos.cargarDatos(nombreInstancia);
 
         Input input = Input.getInstancia();
@@ -63,7 +63,7 @@ public class ImplementacionTSPLIB {
         boolean conSplit = true;
 
         // Experimentos con estadísticas CSV para lista de permutaciones
-        experimentador.ejecutarExperimentoSimpleConCSV(operador2Opt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
+/*        experimentador.ejecutarExperimentoSimpleConCSV(operador2Opt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
         experimentador.ejecutarExperimentoSimpleConCSV(operadorOrOpt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
         experimentador.ejecutarExperimentoSimpleConCSV(operadorSwap, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
         experimentador.ejecutarExperimentoSimpleConCSV(combinacion, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
@@ -73,6 +73,19 @@ public class ImplementacionTSPLIB {
         experimentador.ejecutarMultiStartConCSV(operadorOrOpt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
         experimentador.ejecutarMultiStartConCSV(operadorSwap, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
         experimentador.ejecutarMultiStartConCSV(combinacion, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
+
+        conSplit = false;
+        // Experimentos con estadísticas CSV para lista de permutaciones
+        experimentador.ejecutarExperimentoSimpleConCSV(operador2Opt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
+        experimentador.ejecutarExperimentoSimpleConCSV(operadorOrOpt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
+        experimentador.ejecutarExperimentoSimpleConCSV(operadorSwap, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
+        experimentador.ejecutarExperimentoSimpleConCSV(combinacion, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
+
+        // Multi-Start con estadísticas CSV
+        experimentador.ejecutarMultiStartConCSV(operador2Opt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
+        experimentador.ejecutarMultiStartConCSV(operadorOrOpt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
+        experimentador.ejecutarMultiStartConCSV(operadorSwap, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
+        experimentador.ejecutarMultiStartConCSV(combinacion, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);*/
 
         // Experimento con CSV para una sola permutación (evolución iteración a iteración)
         List<Integer> permutacionIndividual = generadorPermutaciones.aleatoria();
