@@ -3,7 +3,7 @@ package utils;
 import metaheuristics.MultiStart;
 import model.Solucion;
 import operators.OperadorLocal;
-import operators.OperadorSplit;
+import operators.Split;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,13 +33,13 @@ public class Experimentador {
         new Estadisticas(resultados).calcularBasico();
     }
 
-    public void ejecutarExperimentoSimple(OperadorLocal operador, OperadorSplit split,
+    public void ejecutarExperimentoSimple(OperadorLocal operador, Split split,
                                           Evaluador evaluador, List<List<Integer>> listaPermutaciones, boolean conSplit) {
         ejecutarExperimento(operador.getNombre(), listaPermutaciones.size(), new GeneradorSolucion() {
             public Solucion generar(int i) {
                 Solucion s;
                 if (conSplit) {
-                    s = split.generarSolucion(listaPermutaciones.get(i));
+                    s = split.generarCortes(listaPermutaciones.get(i));
                 } else {
                     s = evaluador.evaluarCompleto(listaPermutaciones.get(i));
                 }
@@ -48,7 +48,7 @@ public class Experimentador {
         });
     }
 
-    public void ejecutarExperimentoSimpleConCSV(OperadorLocal operador, OperadorSplit split,
+    public void ejecutarExperimentoSimpleConCSV(OperadorLocal operador, Split split,
                                                 Evaluador evaluador, List<List<Integer>> listaPermutaciones, boolean conSplit, String nombreInstancia) {
         ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
 
@@ -59,7 +59,7 @@ public class Experimentador {
             List<Integer> permutacion = listaPermutaciones.get(i);
             Solucion s;
             if (conSplit) {
-                s = split.generarSolucion(permutacion);
+                s = split.generarCortes(permutacion);
             } else {
                 s = evaluador.evaluarCompleto(permutacion);
             }
@@ -77,7 +77,7 @@ public class Experimentador {
         new Estadisticas(resultados).calcularBasico();
     }
 
-    public void ejecutarExperimentoConCSV(OperadorLocal operador, OperadorSplit split,
+    public void ejecutarExperimentoConCSV(OperadorLocal operador, Split split,
                                           Evaluador evaluador, List<Integer> permutacion, String nombreInstancia) {
         String operadorNombre = operador.getNombre().replace(" ", "_");
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
@@ -91,21 +91,21 @@ public class Experimentador {
         operador.generarMinimoTodosSegmentos(inicialSinSplit);
 
         operador.setExportador(exportador, nombreInstancia, "", true);
-        Solucion inicialConSplit = split.generarSolucion(permutacion);
+        Solucion inicialConSplit = split.generarCortes(permutacion);
         operador.generarMinimoTodosSegmentos(inicialConSplit);
 
         exportador.exportar();
     }
 
-    public void ejecutarSplit(OperadorSplit operadorSplit, List<List<Integer>> listaPermutacionesIniciales) {
-        ejecutarExperimento(operadorSplit.getNombre(), listaPermutacionesIniciales.size(), new GeneradorSolucion() {
+    public void ejecutarSplit(Split split, List<List<Integer>> listaPermutacionesIniciales) {
+        ejecutarExperimento(split.getNombre(), listaPermutacionesIniciales.size(), new GeneradorSolucion() {
             public Solucion generar(int i) {
-                return operadorSplit.generarSolucion(listaPermutacionesIniciales.get(i));
+                return split.generarCortes(listaPermutacionesIniciales.get(i));
             }
         });
     }
 
-    public void ejecutarMultiStart(OperadorLocal operador, OperadorSplit split, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion, boolean conSplit) {
+    public void ejecutarMultiStart(OperadorLocal operador, Split split, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion, boolean conSplit) {
         MultiStart multiStart = new MultiStart(operador, split, evaluador, generadorPermutacion);
         System.out.println("------- MULTI START ------");
         ejecutarExperimento(operador.getNombre(), numIteraciones, new GeneradorSolucion() {
@@ -115,7 +115,7 @@ public class Experimentador {
         });
     }
 
-    public void ejecutarMultiStartConCSV(OperadorLocal operador, OperadorSplit split, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion, boolean conSplit, String nombreInstancia) {
+    public void ejecutarMultiStartConCSV(OperadorLocal operador, Split split, int numIteraciones, Evaluador evaluador, GeneradorPermutacion generadorPermutacion, boolean conSplit, String nombreInstancia) {
         MultiStart multiStart = new MultiStart(operador, split, evaluador, generadorPermutacion);
         ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
 

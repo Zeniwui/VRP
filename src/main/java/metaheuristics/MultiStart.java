@@ -1,9 +1,8 @@
 package metaheuristics;
 
-import model.Input;
 import model.Solucion;
 import operators.OperadorLocal;
-import operators.OperadorSplit;
+import operators.Split;
 import utils.Evaluador;
 import utils.GeneradorPermutacion;
 
@@ -14,8 +13,8 @@ public class MultiStart {
     private OperadorLocal operador;
     private Evaluador evaluador;
     private GeneradorPermutacion generador;
-    private OperadorSplit split;
-    public MultiStart(OperadorLocal operador, OperadorSplit split, Evaluador evaluador, GeneradorPermutacion generador) {
+    private Split split;
+    public MultiStart(OperadorLocal operador, Split split, Evaluador evaluador, GeneradorPermutacion generador) {
         this.operador = operador;
         this.evaluador = evaluador;
         this.generador = generador;
@@ -37,7 +36,7 @@ public class MultiStart {
 
             // Evaluamos la permutacion segun el boolean conSplit
             if (conSplit) {
-                solucionInicial = split.generarSolucion(permutacion);
+                solucionInicial = split.generarCortes(permutacion);
             } else {
                 solucionInicial = evaluador.evaluarCompleto(permutacion);
             }

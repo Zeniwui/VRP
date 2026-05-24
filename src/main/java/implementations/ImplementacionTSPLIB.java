@@ -22,7 +22,7 @@ public class ImplementacionTSPLIB {
         Operador2Opt operador2Opt = new Operador2Opt(evaluadorSoluciones);
         OperadorOrOpt operadorOrOpt = new OperadorOrOpt(evaluadorSoluciones);
         OperadorSwap operadorSwap = new OperadorSwap(evaluadorSoluciones);
-        OperadorSplit split = new OperadorSplit(evaluadorSoluciones);
+        Split split = new Split(evaluadorSoluciones);
         Combinacion combinacion = new Combinacion(operador2Opt, operadorOrOpt, operadorSwap, evaluadorSoluciones);
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
         Experimentador experimentador = new Experimentador();

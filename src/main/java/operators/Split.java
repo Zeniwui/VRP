@@ -7,16 +7,16 @@ import utils.Evaluador;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperadorSplit{
+public class Split {
     private Evaluador evaluador;
     private String nombre = "Operador Split";
     private Input input = Input.getInstancia();
-    public OperadorSplit(Evaluador evaluador) {
+    public Split(Evaluador evaluador) {
         this.evaluador = evaluador;
     }
 
 
-    public Solucion generarSolucion(List<Integer> T) {
+    public Solucion generarCortes(List<Integer> T) {
 
         List<List<Integer>> S = new ArrayList<>();
         int n = T.size();
