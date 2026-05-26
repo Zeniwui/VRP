@@ -12,4 +12,16 @@ public class Individuo {
         funcionObjetivo = costo;
         this.rutas = rutas;
     }
+
+    public List<Integer> getPermutacion() {
+        return permutacion;
+    }
+
+    public double getFuncionObjetivo() {
+        return funcionObjetivo;
+    }
+
+    public List<List<Integer>> getRutas() {
+        return rutas;
+    }
 }
