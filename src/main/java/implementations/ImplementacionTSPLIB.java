@@ -97,9 +97,14 @@ public class ImplementacionTSPLIB {
 //        experimentador.ejecutarExperimentoConCSV(operadorSwap, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
 //        experimentador.ejecutarExperimentoConCSV(combinacion, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
 
-        Individuo solucionGenetico = algGenetico.ejecutar();
-        Individuo solucionGenetico1 = algGenetico.ejecutar();
-        System.out.println(solucionGenetico);
-        System.out.println(solucionGenetico1);
+//        Individuo solucionGenetico = algGenetico.ejecutar();
+//        Individuo solucionGenetico1 = algGenetico.ejecutar();
+//        System.out.println(solucionGenetico);
+//        System.out.println(solucionGenetico1);
+
+        experimentador.ejecutarExperimentoGeneticoConCSV(
+                generadorPermutaciones, split, combinacion, operador2Opt, operadorSwap,
+                30, 100, 15, "CMT1"
+        );
     }
 }

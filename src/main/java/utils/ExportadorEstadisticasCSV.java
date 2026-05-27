@@ -67,7 +67,7 @@ public class ExportadorEstadisticasCSV {
             nombreArchivo = "estadisticas_" + instLimpia + "_" + opLimpio + "_" + modo + "_" + (conSplit ? "conSplit" : "sinSplit") + "_" + timestamp + ".csv";
         }
 
-        Path dir = Paths.get("src", "main", "resources", "resultados", "CMT5");
+        Path dir = Paths.get("src", "main", "resources", "resultados", "CMT1");
         try {
             Files.createDirectories(dir);
         } catch (IOException e) {

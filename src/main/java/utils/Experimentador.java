@@ -1,9 +1,10 @@
 package utils;
 
+import genetic.AlgoritmoGenetico;
+import genetic.Individuo;
 import metaheuristics.MultiStart;
 import model.Solucion;
-import operators.OperadorLocal;
-import operators.Split;
+import operators.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -138,4 +139,39 @@ public class Experimentador {
         new Estadisticas(resultados).calcularBasico();
     }
 
+    public void ejecutarExperimentoGeneticoConCSV(
+            GeneradorPermutacion generador,
+            Split split,
+            Combinacion combinacion,
+            Operador2Opt operador2Opt,
+            OperadorSwap operadorSwap,
+            int numRepeticiones,
+            int numPoblacion,
+            int iteracionesSinMejora,
+            String nombreInstancia) {
+        ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
+        List<Solucion> resultados = new ArrayList<>();
+
+        System.out.println("------- ALGORITMO GENETICO (con CSV) ------");
+        long inicio = System.nanoTime();
+        for (int i = 0; i < numRepeticiones; i++) {
+            AlgoritmoGenetico ga = new AlgoritmoGenetico(generador, split, combinacion, operador2Opt, operadorSwap);
+            ga.setNumPoblacion(numPoblacion);
+            ga.setIteracionesSinMejora(iteracionesSinMejora);
+            ga.setSemilla(2533 + i);
+
+            Individuo mejor = ga.ejecutar();
+            Solucion solucion = new Solucion(mejor.getRutas(), mejor.getFuncionObjetivo());
+            resultados.add(solucion);
+
+            exportador.registrarSoloRuta(solucion.getRuta().toString(), solucion.getCosto());
+        }
+        long fin = System.nanoTime();
+        double tiempoTotalMs = (fin - inicio) / 1_000_000.0;
+
+        exportador.exportar("Genetico", nombreInstancia, true, false, false, tiempoTotalMs);
+
+        System.out.printf("Tiempo ejecucion Algoritmo Genetico %d repeticiones: %f ms\n", numRepeticiones, tiempoTotalMs);
+        new Estadisticas(resultados).calcularBasico();
+    }
 }

@@ -35,6 +35,7 @@ public class AlgoritmoGenetico {
     private double probCruce = 1;
     private double probMutacion = 0.05;
     private Individuo mejorSolucionGlobal;
+    private int iteracionesSinMejora = 15;
 
     private Random random = new Random(semilla);
 
@@ -56,7 +57,7 @@ public class AlgoritmoGenetico {
         int contadorSinMejora = 0;
 
         // Comenzamos bucle
-        while (contadorSinMejora < 15) {
+        while (contadorSinMejora < iteracionesSinMejora) {
             System.out.println("Principio bucle");
 
             // Elegimos pares
@@ -79,7 +80,7 @@ public class AlgoritmoGenetico {
             }
 
             // Evaluamos las permutaciones de los hijos que han salido
-            // Utilizamos split + busqueda local (el que combina varios operadores)
+            // Utilizamos split + busqueda local (el que combina varios operadores) TODO
             for (Individuo hijo: hijos) {
                 Solucion solucion = split.generarCortes(hijo.getPermutacion());
                 solucion = operadorSwap.generarMinimoTodosSegmentos(solucion);
@@ -245,6 +246,17 @@ public class AlgoritmoGenetico {
 
         hijos.set(indice, new Individuo(permHijo));
 
+    }
+
+    public void setNumPoblacion(int numPoblacion) {
+        this.numPoblacion = numPoblacion;
+    }
+    public void setIteracionesSinMejora(int iteracionesSinMejora) {
+        this.iteracionesSinMejora = iteracionesSinMejora;
+    }
+    public void setSemilla(int semilla) {
+        this.semilla = semilla;
+        this.random = new Random(semilla);
     }
 
 
