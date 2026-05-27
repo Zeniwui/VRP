@@ -13,6 +13,10 @@ public class Individuo {
         this.rutas = rutas;
     }
 
+    public Individuo(List<Integer> per) {
+        permutacion = per;
+    }
+
     public List<Integer> getPermutacion() {
         return permutacion;
     }
@@ -23,5 +27,19 @@ public class Individuo {
 
     public List<List<Integer>> getRutas() {
         return rutas;
+    }
+
+    public void setRutas(List<List<Integer>> rutas) {
+        this.rutas = rutas;
+    }
+
+    public void setFuncionObjetivo(double funcionObjetivo) {
+        this.funcionObjetivo = funcionObjetivo;
+    }
+    @Override
+    public String toString() {
+        String s = "";
+        s += "Permutacion" + permutacion + "\nCosto: " + funcionObjetivo + "\nRutas: " + rutas;
+        return s;
     }
 }

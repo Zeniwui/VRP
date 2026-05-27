@@ -1,5 +1,7 @@
 package implementations;
 
+import genetic.AlgoritmoGenetico;
+import genetic.Individuo;
 import io.CargadorArchivos;
 import model.Input;
 import operators.*;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class ImplementacionTSPLIB {
     public void implementar(int semilla, int numPermutaciones) {
-        String nombreInstancia = "CMT5.vrp";
+        String nombreInstancia = "CMT1.vrp";
         CargadorArchivos.cargarDatos(nombreInstancia);
 
         Input input = Input.getInstancia();
@@ -27,6 +29,7 @@ public class ImplementacionTSPLIB {
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
         Experimentador experimentador = new Experimentador();
 
+        AlgoritmoGenetico algGenetico = new AlgoritmoGenetico(generadorPermutaciones, split, combinacion, operador2Opt, operadorSwap);
 
 /*        List<List<Integer>> listaDeRutas = Arrays.asList(
                 Arrays.asList(92, 37, 98, 100, 91, 16, 86, 38, 44, 14, 42, 43, 15, 57, 2, 58),
@@ -87,12 +90,16 @@ public class ImplementacionTSPLIB {
         experimentador.ejecutarMultiStartConCSV(operadorSwap, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
         experimentador.ejecutarMultiStartConCSV(combinacion, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);*/
 
-        // Experimento con CSV para una sola permutación (evolución iteración a iteración)
-        List<Integer> permutacionIndividual = generadorPermutaciones.aleatoria();
-        experimentador.ejecutarExperimentoConCSV(operador2Opt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-        experimentador.ejecutarExperimentoConCSV(operadorOrOpt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-        experimentador.ejecutarExperimentoConCSV(operadorSwap, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-        experimentador.ejecutarExperimentoConCSV(combinacion, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
+//        // Experimento con CSV para una sola permutación (evolución iteración a iteración)
+//        List<Integer> permutacionIndividual = generadorPermutaciones.aleatoria();
+//        experimentador.ejecutarExperimentoConCSV(operador2Opt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
+//        experimentador.ejecutarExperimentoConCSV(operadorOrOpt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
+//        experimentador.ejecutarExperimentoConCSV(operadorSwap, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
+//        experimentador.ejecutarExperimentoConCSV(combinacion, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
 
+        Individuo solucionGenetico = algGenetico.ejecutar();
+        Individuo solucionGenetico1 = algGenetico.ejecutar();
+        System.out.println(solucionGenetico);
+        System.out.println(solucionGenetico1);
     }
 }
