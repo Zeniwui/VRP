@@ -40,7 +40,7 @@ public class Estadisticas {
         desviacionTipica = Math.sqrt(sumaCuadrados / datos.size());
 
         System.out.println("------------------------------------------------------------------------------------");
-        System.out.println("            ESTADÍSTICAS           ");
+        System.out.println("            ESTADISTICAS           ");
         System.out.println("Mejor: " + mejor);
         System.out.println("Peor: " + peor);
         System.out.println("Promedio: " + promedio);

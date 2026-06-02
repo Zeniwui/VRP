@@ -28,6 +28,8 @@ public class AlgoritmoGenetico {
     private OperadorOrOpt operadorOrOpt;
     private OperadorSwap operadorSwap;
     private Combinacion operadorCombo;
+    private OperadorLocal operadorLocal = null;
+    private boolean usarBusquedaLocal = false;
     private EvaluadorGenerico evaluador;
 
     private int numPoblacion = 100;
@@ -49,7 +51,7 @@ public class AlgoritmoGenetico {
 
     public Individuo ejecutar() {
         generarPoblacionInicial(numPoblacion);
-        hijos = new ArrayList<>(List.copyOf(padres));
+        hijos = new ArrayList<>(padres);
 
         // Hallamos cual es el mejor individuo del array de padres
         mejorSolucionGlobal = Collections.min(padres, Comparator.comparingDouble(Individuo::getFuncionObjetivo));
@@ -80,10 +82,12 @@ public class AlgoritmoGenetico {
             }
 
             // Evaluamos las permutaciones de los hijos que han salido
-            // Utilizamos split + busqueda local (el que combina varios operadores) TODO
+            // Utilizamos split + busqueda local (si esta activada)
             for (Individuo hijo: hijos) {
                 Solucion solucion = split.generarCortes(hijo.getPermutacion());
-                solucion = operadorSwap.generarMinimoTodosSegmentos(solucion);
+                if (usarBusquedaLocal && operadorLocal != null) {
+                    solucion = operadorLocal.generarMinimoTodosSegmentos(solucion);
+                }
                 hijo.setFuncionObjetivo(solucion.getCosto());
                 hijo.setRutas(solucion.getRuta());
             }
@@ -259,5 +263,16 @@ public class AlgoritmoGenetico {
         this.random = new Random(semilla);
     }
 
+    public void setBusquedaLocal(OperadorLocal operador, boolean activar) {
+        this.operadorLocal = operador;
+        this.usarBusquedaLocal = activar;
+    }
+
+    public String getNombreOperadorLocal() {
+        if (usarBusquedaLocal && operadorLocal != null) {
+            return operadorLocal.getNombre();
+        }
+        return "sinBL";
+    }
 
 }

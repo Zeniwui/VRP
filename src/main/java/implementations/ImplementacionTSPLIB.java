@@ -13,9 +13,9 @@ import utils.GeneradorPermutacion;
 import java.util.List;
 
 public class ImplementacionTSPLIB {
-    public void implementar(int semilla, int numPermutaciones) {
-        String nombreInstancia = "CMT1.vrp";
-        CargadorArchivos.cargarDatos(nombreInstancia);
+    public void implementar(String instancia, int semilla, int numPermutaciones) {
+
+        CargadorArchivos.cargarDatos(instancia);
 
         Input input = Input.getInstancia();
         input.mostrarDatosCargados();
@@ -102,9 +102,31 @@ public class ImplementacionTSPLIB {
 //        System.out.println(solucionGenetico);
 //        System.out.println(solucionGenetico1);
 
+        // Evaluo el algoritmo genético para solo split, y para cada uno de los operadores
+        System.out.println("Genetico sin BL");
         experimentador.ejecutarExperimentoGeneticoConCSV(
-                generadorPermutaciones, split, combinacion, operador2Opt, operadorSwap,
-                30, 100, 15, "CMT1"
+                generadorPermutaciones, split, evaluadorSoluciones, null,
+                numPermutaciones, 100, 15, instancia
+        );
+        System.out.println("Genetico + Combo");
+        experimentador.ejecutarExperimentoGeneticoConCSV(
+                generadorPermutaciones, split, evaluadorSoluciones, combinacion,
+                numPermutaciones, 100, 15, instancia
+        );
+        System.out.println("Genetico + 2opt");
+        experimentador.ejecutarExperimentoGeneticoConCSV(
+                generadorPermutaciones, split, evaluadorSoluciones, operador2Opt,
+                numPermutaciones, 100, 15, instancia
+        );
+        System.out.println("Genetico + Oropt");
+        experimentador.ejecutarExperimentoGeneticoConCSV(
+                generadorPermutaciones, split, evaluadorSoluciones, operadorOrOpt,
+                numPermutaciones, 100, 15, instancia
+        );
+        System.out.println("Genetico + Swap");
+        experimentador.ejecutarExperimentoGeneticoConCSV(
+                generadorPermutaciones, split, evaluadorSoluciones, operadorSwap,
+                numPermutaciones, 100, 15, instancia
         );
     }
 }

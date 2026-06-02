@@ -3,7 +3,6 @@ import implementations.ImplementacionTSPLIB;
 import implementations.Implementation1;
 import utils.Evaluador;
 
-import java.awt.image.BaseMultiResolutionImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +12,16 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Implementation1 mio = new Implementation1();
-        //mio.implementar(SEMILLA, NUM_PERMUTACIONES);
+        if (args.length < 1) {
+            System.err.println("Uso: java -jar VRP.jar <archivo_instancia>");
+            System.exit(1);
+        }
 
-        ImplementacionSolomon solomon = new ImplementacionSolomon();
-        //solomon.implementar(SEMILLA, NUM_PERMUTACIONES);
+        String instancia = args[0];
+//        String instancia = "CMT1.vrp";
 
         ImplementacionTSPLIB tsplib = new ImplementacionTSPLIB();
-        tsplib.implementar(SEMILLA, NUM_PERMUTACIONES);
+        tsplib.implementar(instancia, SEMILLA, NUM_PERMUTACIONES);
 
     }
 }

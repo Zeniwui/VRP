@@ -31,6 +31,10 @@ public class ExportadorEstadisticasCSV {
     }
 
     public void exportar(String operador, String instancia, boolean conSplit, boolean conPermutacionInicial, boolean esMultiStart, double tiempoTotalMs) {
+        exportar(operador, "ninguno", instancia, conSplit, conPermutacionInicial, esMultiStart, tiempoTotalMs);
+    }
+
+    public void exportar(String operador, String localSearchOperator, String instancia, boolean conSplit, boolean conPermutacionInicial, boolean esMultiStart, double tiempoTotalMs) {
         if (filasDetalle.isEmpty()) {
             System.out.println("ExportadorEstadisticasCSV: no hay registros para exportar.");
             return;
@@ -67,7 +71,7 @@ public class ExportadorEstadisticasCSV {
             nombreArchivo = "estadisticas_" + instLimpia + "_" + opLimpio + "_" + modo + "_" + (conSplit ? "conSplit" : "sinSplit") + "_" + timestamp + ".csv";
         }
 
-        Path dir = Paths.get("src", "main", "resources", "resultados", "CMT1");
+        Path dir = Paths.get("resultados");
         try {
             Files.createDirectories(dir);
         } catch (IOException e) {
@@ -96,9 +100,11 @@ public class ExportadorEstadisticasCSV {
             }
 
             writer.newLine();
-            writer.write("ESTADÍSTICAS");
+            writer.write("ESTADISTICAS");
             writer.newLine();
             writer.write(String.format(Locale.US, "operador,%s", operador));
+            writer.newLine();
+            writer.write(String.format(Locale.US, "local_search_operator,%s", localSearchOperator));
             writer.newLine();
             writer.write(String.format(Locale.US, "instancia,%s", instancia));
             writer.newLine();

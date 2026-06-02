@@ -72,7 +72,7 @@ public class Experimentador {
         long fin = System.nanoTime();
         double tiempoTotalMs = (fin - inicio) / 1_000_000.0;
 
-        exportador.exportar(operador.getNombre(), nombreInstancia, conSplit, true, false, tiempoTotalMs);
+        exportador.exportar(operador.getNombre(), operador.getNombre(), nombreInstancia, conSplit, true, false, tiempoTotalMs);
 
         System.out.printf("Tiempo ejecucion %s %d repeticiones: %f ms\n", operador.getNombre(), listaPermutaciones.size(), tiempoTotalMs);
         new Estadisticas(resultados).calcularBasico();
@@ -133,7 +133,7 @@ public class Experimentador {
         long fin = System.nanoTime();
         double tiempoTotalMs = (fin - inicio) / 1_000_000.0;
 
-        exportador.exportar(operador.getNombre(), nombreInstancia, conSplit, false, true, tiempoTotalMs);
+        exportador.exportar(operador.getNombre(), operador.getNombre(), nombreInstancia, conSplit, false, true, tiempoTotalMs);
 
         System.out.printf("Tiempo ejecucion %s %d repeticiones: %f ms\n", operador.getNombre(), numIteraciones, tiempoTotalMs);
         new Estadisticas(resultados).calcularBasico();
@@ -142,9 +142,8 @@ public class Experimentador {
     public void ejecutarExperimentoGeneticoConCSV(
             GeneradorPermutacion generador,
             Split split,
-            Combinacion combinacion,
-            Operador2Opt operador2Opt,
-            OperadorSwap operadorSwap,
+            Evaluador evaluador,
+            OperadorLocal operadorLocal,
             int numRepeticiones,
             int numPoblacion,
             int iteracionesSinMejora,
@@ -152,13 +151,21 @@ public class Experimentador {
         ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
         List<Solucion> resultados = new ArrayList<>();
 
+        Operador2Opt op2Opt = new Operador2Opt(evaluador);
+        OperadorOrOpt opOrOpt = new OperadorOrOpt(evaluador);
+        OperadorSwap opSwap = new OperadorSwap(evaluador);
+        Combinacion combo = new Combinacion(op2Opt, opOrOpt, opSwap, evaluador);
+
+        boolean usarBL = operadorLocal != null;
+
         System.out.println("------- ALGORITMO GENETICO (con CSV) ------");
         long inicio = System.nanoTime();
         for (int i = 0; i < numRepeticiones; i++) {
-            AlgoritmoGenetico ga = new AlgoritmoGenetico(generador, split, combinacion, operador2Opt, operadorSwap);
+            AlgoritmoGenetico ga = new AlgoritmoGenetico(generador, split, combo, op2Opt, opSwap);
             ga.setNumPoblacion(numPoblacion);
             ga.setIteracionesSinMejora(iteracionesSinMejora);
             ga.setSemilla(2533 + i);
+            ga.setBusquedaLocal(operadorLocal, usarBL);
 
             Individuo mejor = ga.ejecutar();
             Solucion solucion = new Solucion(mejor.getRutas(), mejor.getFuncionObjetivo());
@@ -169,7 +176,11 @@ public class Experimentador {
         long fin = System.nanoTime();
         double tiempoTotalMs = (fin - inicio) / 1_000_000.0;
 
-        exportador.exportar("Genetico", nombreInstancia, true, false, false, tiempoTotalMs);
+        String nombreLS = usarBL
+                ? operadorLocal.getNombre().replace(" ", "_").replace(",", "")
+                : "ninguno";
+        String nombreGenetico = "Genetico" + (nombreLS.equals("ninguno") ? "" : "+" + nombreLS);
+        exportador.exportar(nombreGenetico, nombreLS, nombreInstancia, true, false, false, tiempoTotalMs);
 
         System.out.printf("Tiempo ejecucion Algoritmo Genetico %d repeticiones: %f ms\n", numRepeticiones, tiempoTotalMs);
         new Estadisticas(resultados).calcularBasico();

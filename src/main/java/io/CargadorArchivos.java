@@ -6,11 +6,15 @@ import io.parsers.LectorFormatoSolomon;
 import io.parsers.LectorFormatoTSPLIB;
 import model.Input;
 
-import java.net.URI;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CargadorArchivos {
     private static final List<LectorFormato> lectores = Arrays.asList(
@@ -21,8 +25,19 @@ public class CargadorArchivos {
 
     public static void cargarDatos(String nombreFichero) {
         try {
-            URI uri = CargadorArchivos.class.getClassLoader().getResource(nombreFichero).toURI();
-            List<String> lineas = Files.readAllLines(Paths.get(uri));
+            List<String> lineas;
+            Path path = Paths.get(nombreFichero);
+            if (Files.exists(path)) {
+                lineas = Files.readAllLines(path);
+            } else {
+                try (InputStream is = CargadorArchivos.class.getClassLoader().getResourceAsStream(nombreFichero)) {
+                    if (is == null) {
+                        System.err.println("ERROR: No se encontró el archivo: " + nombreFichero);
+                        return;
+                    }
+                    lineas = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.toList());
+                }
+            }
 
             Input input = Input.getInstancia();
 

@@ -36,7 +36,7 @@ public class ExportadorCSV {
             nombreArchivo = "resultados_" + instancia + "_" + operador + "_" + timestamp + ".csv";
         }
 
-        Path dir = Paths.get("src", "main", "resources", "resultados", "CMT5");
+        Path dir = Paths.get("resultados");
         try {
             Files.createDirectories(dir);
         } catch (IOException e) {
