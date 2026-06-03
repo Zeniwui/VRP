@@ -20,7 +20,7 @@ public class GeneradorPermutacion {
     public List<Integer> aleatoria() {
         List<Integer> permutacion = new ArrayList<>();
 
-        for (int i = 1; i < dimension; i++) {
+        for (int i = 2; i < dimension; i++) {
             permutacion.add(i);
         }
 
@@ -36,7 +36,7 @@ public class GeneradorPermutacion {
         // Generamos la permutacion base
         List<Integer> permutacionBase = new ArrayList<>();
 
-        for (int i = 1; i < dimension; i++) {
+        for (int i = 2; i < dimension; i++) {
             permutacionBase.add(i);
         }
 

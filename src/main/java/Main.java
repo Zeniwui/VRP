@@ -18,7 +18,7 @@ public class Main {
         }
 
         String instancia = args[0];
-//        String instancia = "CMT1.vrp";
+//        String instancia = "CMT5.vrp";
 
         ImplementacionTSPLIB tsplib = new ImplementacionTSPLIB();
         tsplib.implementar(instancia, SEMILLA, NUM_PERMUTACIONES);

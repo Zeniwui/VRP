@@ -5,10 +5,7 @@ import io.CargadorArchivos;
 import metaheuristics.MultiStart;
 import model.Input;
 import operators.*;
-import utils.Evaluador;
-import utils.EvaluadorGenerico;
-import utils.ExportadorCSV;
-import utils.GeneradorPermutacion;
+import utils.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,8 +41,7 @@ public class ImplementacionTSPLIB {
         ga1.setExportadorCSV(csv1, instancia);
         ga1.ejecutar();*/
 
-/*
-        // --- Experimento 2: GA + Combinacion ---
+/*        // --- Experimento 2: GA + Combinacion ---
         System.out.println("=== EXPERIMENTO 2: GA + Combinacion ===");
         ExportadorCSV csv2 = new ExportadorCSV();
         csv2.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
@@ -56,17 +52,16 @@ public class ImplementacionTSPLIB {
         ga2.setSemilla(semilla);
         ga2.setBusquedaLocal(combinacion, true);
         ga2.setExportadorCSV(csv2, instancia);
-        ga2.ejecutar();
-*/
+        ga2.ejecutar();*/
 
-        // --- Experimento 3: Multi-start (100 iteraciones) + Combinacion ---
+/*        // --- Experimento 3: Multi-start (100 iteraciones) + Combinacion ---
         System.out.println("=== EXPERIMENTO 3: MultiStart + Combinacion ===");
         ExportadorCSV csv3 = new ExportadorCSV();
         csv3.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
                 + "_MultiStart_Combinacion_" + timestamp + ".csv");
         MultiStart multiStart = new MultiStart(combinacion, split, evaluadorSoluciones, generadorPermutaciones);
         multiStart.setExportadorCSV(csv3, instancia);
-        multiStart.generarMejorSolucion(100, true);
+        multiStart.generarMejorSolucion(100, true);*/
 
 /*        // --- Experimento 4: GA + Swap ---
         System.out.println("=== EXPERIMENTO 4: GA + Swap ===");
@@ -80,5 +75,18 @@ public class ImplementacionTSPLIB {
         ga2.setBusquedaLocal(operadorSwap, true);
         ga2.setExportadorCSV(csv2, instancia);
         ga2.ejecutar();*/
+
+        // --- Experimento 5: GA + Combinacion (30 repeticiones) ---
+        System.out.println("=== EXPERIMENTO 5: GA + Combinacion (30 repeticiones) ===");
+        Experimentador experimentador = new Experimentador();
+        experimentador.ejecutarExperimentoGeneticoConCSV(
+                generadorPermutaciones,
+                split,
+                evaluadorSoluciones,
+                combinacion,
+                30,
+                100,
+                15,
+                instancia);
     }
 }

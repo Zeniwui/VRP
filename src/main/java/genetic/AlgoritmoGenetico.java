@@ -36,6 +36,8 @@ public class AlgoritmoGenetico {
     private Individuo mejorSolucionGlobal;
     private int iteracionesSinMejora = 15;
 
+    private int maxGeneraciones = 500;
+
     private Random random = new Random(semilla);
 
     public AlgoritmoGenetico(GeneradorPermutacion generador, Split operadorSplit) {
@@ -62,7 +64,7 @@ public class AlgoritmoGenetico {
         int numGeneracion = 0;
 
         // Comenzamos bucle
-        while (contadorSinMejora < iteracionesSinMejora) {
+        while (contadorSinMejora < iteracionesSinMejora && numGeneracion < maxGeneraciones) {
             numGeneracion++;
 
             // Elegimos pares
@@ -272,6 +274,10 @@ public class AlgoritmoGenetico {
     public void setIteracionesSinMejora(int iteracionesSinMejora) {
         this.iteracionesSinMejora = iteracionesSinMejora;
     }
+    public void setMaxGeneraciones(int maxGeneraciones) {
+        this.maxGeneraciones = maxGeneraciones;
+    }
+
     public void setSemilla(int semilla) {
         this.semilla = semilla;
         this.random = new Random(semilla);
