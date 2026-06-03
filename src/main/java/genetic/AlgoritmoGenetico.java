@@ -2,7 +2,7 @@ package genetic;
 
 import model.Solucion;
 import operators.*;
-import utils.EvaluadorGenerico;
+import utils.ExportadorCSV;
 import utils.GeneradorPermutacion;
 
 import java.util.*;
@@ -24,13 +24,10 @@ public class AlgoritmoGenetico {
     private List<Individuo> hijos;
     private GeneradorPermutacion generador;
     private Split split;
-    private Operador2Opt operador2Opt;
-    private OperadorOrOpt operadorOrOpt;
-    private OperadorSwap operadorSwap;
-    private Combinacion operadorCombo;
     private OperadorLocal operadorLocal = null;
     private boolean usarBusquedaLocal = false;
-    private EvaluadorGenerico evaluador;
+    private ExportadorCSV exportadorCSV;
+    private String nombreInstanciaCSV;
 
     private int numPoblacion = 100;
     private int semilla = 2533;
@@ -41,26 +38,32 @@ public class AlgoritmoGenetico {
 
     private Random random = new Random(semilla);
 
-    public AlgoritmoGenetico(GeneradorPermutacion generador, Split operadorSplit, Combinacion operadorCombo, Operador2Opt operador2Opt, OperadorSwap swap) {
+    public AlgoritmoGenetico(GeneradorPermutacion generador, Split operadorSplit) {
         this.generador = generador;
         this.split = operadorSplit;
-        this.operadorCombo = operadorCombo;
-        this.operador2Opt = operador2Opt;
-        this.operadorSwap = swap;
     }
 
     public Individuo ejecutar() {
+        long inicio = System.nanoTime();
         generarPoblacionInicial(numPoblacion);
         hijos = new ArrayList<>(padres);
 
         // Hallamos cual es el mejor individuo del array de padres
         mejorSolucionGlobal = Collections.min(padres, Comparator.comparingDouble(Individuo::getFuncionObjetivo));
 
+        String opNombre = usarBusquedaLocal && operadorLocal != null
+                ? operadorLocal.getNombre() : "split";
+        if (exportadorCSV != null) {
+            exportadorCSV.registrar(0, 0.0, mejorSolucionGlobal.getFuncionObjetivo(),
+                    opNombre, nombreInstanciaCSV, mejorSolucionGlobal.getRutas().toString(), true);
+        }
+
         int contadorSinMejora = 0;
+        int numGeneracion = 0;
 
         // Comenzamos bucle
         while (contadorSinMejora < iteracionesSinMejora) {
-            System.out.println("Principio bucle");
+            numGeneracion++;
 
             // Elegimos pares
             elegirPares();
@@ -112,12 +115,23 @@ public class AlgoritmoGenetico {
             if (mejorActual.getFuncionObjetivo() < mejorSolucionGlobal.getFuncionObjetivo()) {
                 mejorSolucionGlobal = mejorActual;
                 contadorSinMejora = 0;
+                System.out.println("Ha habido mejora");
             } else {
+                System.out.println("No ha habido mejora");
                 contadorSinMejora++;    // No ha habido mejora
             }
 
-            System.out.println("Final bucle");
+            // Registrar mejor solución hasta el momento
+            if (exportadorCSV != null) {
+                double tiempo = (System.nanoTime() - inicio) / 1_000.0;
+                exportadorCSV.registrar(numGeneracion, tiempo, mejorSolucionGlobal.getFuncionObjetivo(),
+                        opNombre, nombreInstanciaCSV, mejorSolucionGlobal.getRutas().toString(), true);
+            }
 
+        }
+
+        if (exportadorCSV != null) {
+            exportadorCSV.exportar();
         }
 
         return mejorSolucionGlobal;
@@ -261,6 +275,11 @@ public class AlgoritmoGenetico {
     public void setSemilla(int semilla) {
         this.semilla = semilla;
         this.random = new Random(semilla);
+    }
+
+    public void setExportadorCSV(ExportadorCSV exportador, String instancia) {
+        this.exportadorCSV = exportador;
+        this.nombreInstanciaCSV = instancia;
     }
 
     public void setBusquedaLocal(OperadorLocal operador, boolean activar) {

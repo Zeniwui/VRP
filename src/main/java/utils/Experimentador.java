@@ -151,17 +151,12 @@ public class Experimentador {
         ExportadorEstadisticasCSV exportador = new ExportadorEstadisticasCSV();
         List<Solucion> resultados = new ArrayList<>();
 
-        Operador2Opt op2Opt = new Operador2Opt(evaluador);
-        OperadorOrOpt opOrOpt = new OperadorOrOpt(evaluador);
-        OperadorSwap opSwap = new OperadorSwap(evaluador);
-        Combinacion combo = new Combinacion(op2Opt, opOrOpt, opSwap, evaluador);
-
         boolean usarBL = operadorLocal != null;
 
         System.out.println("------- ALGORITMO GENETICO (con CSV) ------");
         long inicio = System.nanoTime();
         for (int i = 0; i < numRepeticiones; i++) {
-            AlgoritmoGenetico ga = new AlgoritmoGenetico(generador, split, combo, op2Opt, opSwap);
+            AlgoritmoGenetico ga = new AlgoritmoGenetico(generador, split);
             ga.setNumPoblacion(numPoblacion);
             ga.setIteracionesSinMejora(iteracionesSinMejora);
             ga.setSemilla(2533 + i);

@@ -1,15 +1,17 @@
 package implementations;
 
 import genetic.AlgoritmoGenetico;
-import genetic.Individuo;
 import io.CargadorArchivos;
+import metaheuristics.MultiStart;
 import model.Input;
 import operators.*;
 import utils.Evaluador;
 import utils.EvaluadorGenerico;
-import utils.Experimentador;
+import utils.ExportadorCSV;
 import utils.GeneradorPermutacion;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ImplementacionTSPLIB {
@@ -27,106 +29,56 @@ public class ImplementacionTSPLIB {
         Split split = new Split(evaluadorSoluciones);
         Combinacion combinacion = new Combinacion(operador2Opt, operadorOrOpt, operadorSwap, evaluadorSoluciones);
         GeneradorPermutacion generadorPermutaciones = new GeneradorPermutacion(input.getDimension(), semilla);
-        Experimentador experimentador = new Experimentador();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
-        AlgoritmoGenetico algGenetico = new AlgoritmoGenetico(generadorPermutaciones, split, combinacion, operador2Opt, operadorSwap);
+/*        // --- Experimento 1: GA solo split ---
+        System.out.println("=== EXPERIMENTO 1: GA solo split ===");
+        ExportadorCSV csv1 = new ExportadorCSV();
+        csv1.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
+                + "_GA_split_" + timestamp + ".csv");
+        AlgoritmoGenetico ga1 = new AlgoritmoGenetico(generadorPermutaciones, split);
+        ga1.setNumPoblacion(100);
+        ga1.setIteracionesSinMejora(15);
+        ga1.setSemilla(semilla);
+        ga1.setBusquedaLocal(null, false);
+        ga1.setExportadorCSV(csv1, instancia);
+        ga1.ejecutar();*/
 
-/*        List<List<Integer>> listaDeRutas = Arrays.asList(
-                Arrays.asList(92, 37, 98, 100, 91, 16, 86, 38, 44, 14, 42, 43, 15, 57, 2, 58),
-                Arrays.asList(6, 96, 99, 59, 93, 85, 61, 17, 45, 84, 5, 60, 89),
-                Arrays.asList(27, 69, 1, 70, 30, 20, 66, 32, 90, 63, 10, 62, 88, 31),
-                Arrays.asList(21, 72, 75, 56, 39, 67, 23, 41, 22, 74, 73, 40),
-                Arrays.asList(18, 83, 8, 46, 47, 36, 49, 64, 11, 19, 48, 82, 7, 52),
-                Arrays.asList(94, 95, 97, 87, 13),
-                Arrays.asList(28, 12, 80, 68, 29, 24, 54, 55, 25, 4, 26, 53),
-                Arrays.asList(76, 77, 3, 79, 78, 34, 35, 65, 71, 9, 51, 81, 33, 50)
-        );
+/*
+        // --- Experimento 2: GA + Combinacion ---
+        System.out.println("=== EXPERIMENTO 2: GA + Combinacion ===");
+        ExportadorCSV csv2 = new ExportadorCSV();
+        csv2.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
+                + "_GA_Combinacion_" + timestamp + ".csv");
+        AlgoritmoGenetico ga2 = new AlgoritmoGenetico(generadorPermutaciones, split);
+        ga2.setNumPoblacion(100);
+        ga2.setIteracionesSinMejora(15);
+        ga2.setSemilla(semilla);
+        ga2.setBusquedaLocal(combinacion, true);
+        ga2.setExportadorCSV(csv2, instancia);
+        ga2.ejecutar();
+*/
 
-        Solucion solucionInicial = new Solucion(listaDeRutas, evaluadorSoluciones.evaluarRutaCompleta(listaDeRutas));
-        System.out.println("Solucion de la permutacion aleatoria inicial: " + solucionInicial);
+        // --- Experimento 3: Multi-start (100 iteraciones) + Combinacion ---
+        System.out.println("=== EXPERIMENTO 3: MultiStart + Combinacion ===");
+        ExportadorCSV csv3 = new ExportadorCSV();
+        csv3.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
+                + "_MultiStart_Combinacion_" + timestamp + ".csv");
+        MultiStart multiStart = new MultiStart(combinacion, split, evaluadorSoluciones, generadorPermutaciones);
+        multiStart.setExportadorCSV(csv3, instancia);
+        multiStart.generarMejorSolucion(100, true);
 
-        System.out.println("---------------------------------------------- OPERADOR 2-OPT -----------------------------------------------");
-        Solucion minimo2Opt = operador2Opt.generarMinimoTodosSegmentos(solucionInicial);
-        System.out.println("Solucion minimo 2-opt partiendo de la permutacion aleatoria inicial: " + minimo2Opt);
-
-        System.out.println("---------------------------------------------- OPERADOR OR-OPT -----------------------------------------------");
-        Solucion minimoOrOpt = operadorOrOpt.generarMinimoLocal(solucionInicial);
-        System.out.println("Solucion minimo OR-opt partiendo de la permutacion aleatoria inicial: " + minimoOrOpt);
-
-        //Generamos la solucion optima aplicando el operador swap
-        System.out.println("---------------------------------------------- OPERADOR SWAP -----------------------------------------------");
-        Solucion minimoSwap = operadorSwap.generarMinimoTodosSegmentos(solucionInicial);
-        System.out.println("Solucion minimo swap partiendo de la permutacion aleatoria inicial: " + minimoSwap);*/
-
-
-
-        // Generamos 30 permutaciones distintas
-        List<List<Integer>> listaPermutaciones = generadorPermutaciones.listaDePermutaciones(numPermutaciones);
-
-        boolean conSplit = true;
-
-        // Experimentos con estadísticas CSV para lista de permutaciones
-/*        experimentador.ejecutarExperimentoSimpleConCSV(operador2Opt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarExperimentoSimpleConCSV(operadorOrOpt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarExperimentoSimpleConCSV(operadorSwap, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarExperimentoSimpleConCSV(combinacion, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-
-        // Multi-Start con estadísticas CSV
-        experimentador.ejecutarMultiStartConCSV(operador2Opt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarMultiStartConCSV(operadorOrOpt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarMultiStartConCSV(operadorSwap, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarMultiStartConCSV(combinacion, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-
-        conSplit = false;
-        // Experimentos con estadísticas CSV para lista de permutaciones
-        experimentador.ejecutarExperimentoSimpleConCSV(operador2Opt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarExperimentoSimpleConCSV(operadorOrOpt, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarExperimentoSimpleConCSV(operadorSwap, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarExperimentoSimpleConCSV(combinacion, split, evaluadorSoluciones, listaPermutaciones, conSplit, nombreInstancia);
-
-        // Multi-Start con estadísticas CSV
-        experimentador.ejecutarMultiStartConCSV(operador2Opt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarMultiStartConCSV(operadorOrOpt, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarMultiStartConCSV(operadorSwap, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);
-        experimentador.ejecutarMultiStartConCSV(combinacion, split, 30, evaluadorSoluciones, generadorPermutaciones, conSplit, nombreInstancia);*/
-
-//        // Experimento con CSV para una sola permutación (evolución iteración a iteración)
-//        List<Integer> permutacionIndividual = generadorPermutaciones.aleatoria();
-//        experimentador.ejecutarExperimentoConCSV(operador2Opt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-//        experimentador.ejecutarExperimentoConCSV(operadorOrOpt, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-//        experimentador.ejecutarExperimentoConCSV(operadorSwap, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-//        experimentador.ejecutarExperimentoConCSV(combinacion, split, evaluadorSoluciones, permutacionIndividual, nombreInstancia);
-
-//        Individuo solucionGenetico = algGenetico.ejecutar();
-//        Individuo solucionGenetico1 = algGenetico.ejecutar();
-//        System.out.println(solucionGenetico);
-//        System.out.println(solucionGenetico1);
-
-        // Evaluo el algoritmo genético para solo split, y para cada uno de los operadores
-        System.out.println("Genetico sin BL");
-        experimentador.ejecutarExperimentoGeneticoConCSV(
-                generadorPermutaciones, split, evaluadorSoluciones, null,
-                numPermutaciones, 100, 15, instancia
-        );
-        System.out.println("Genetico + Combo");
-        experimentador.ejecutarExperimentoGeneticoConCSV(
-                generadorPermutaciones, split, evaluadorSoluciones, combinacion,
-                numPermutaciones, 100, 15, instancia
-        );
-        System.out.println("Genetico + 2opt");
-        experimentador.ejecutarExperimentoGeneticoConCSV(
-                generadorPermutaciones, split, evaluadorSoluciones, operador2Opt,
-                numPermutaciones, 100, 15, instancia
-        );
-        System.out.println("Genetico + Oropt");
-        experimentador.ejecutarExperimentoGeneticoConCSV(
-                generadorPermutaciones, split, evaluadorSoluciones, operadorOrOpt,
-                numPermutaciones, 100, 15, instancia
-        );
-        System.out.println("Genetico + Swap");
-        experimentador.ejecutarExperimentoGeneticoConCSV(
-                generadorPermutaciones, split, evaluadorSoluciones, operadorSwap,
-                numPermutaciones, 100, 15, instancia
-        );
+/*        // --- Experimento 4: GA + Swap ---
+        System.out.println("=== EXPERIMENTO 4: GA + Swap ===");
+        ExportadorCSV csv2 = new ExportadorCSV();
+        csv2.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
+                + "_GA_Combinacion_" + timestamp + ".csv");
+        AlgoritmoGenetico ga2 = new AlgoritmoGenetico(generadorPermutaciones, split);
+        ga2.setNumPoblacion(100);
+        ga2.setIteracionesSinMejora(15);
+        ga2.setSemilla(semilla);
+        ga2.setBusquedaLocal(operadorSwap, true);
+        ga2.setExportadorCSV(csv2, instancia);
+        ga2.ejecutar();*/
     }
 }
