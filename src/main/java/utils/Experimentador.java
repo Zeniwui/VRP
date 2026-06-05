@@ -160,7 +160,7 @@ public class Experimentador {
             ga.setNumPoblacion(numPoblacion);
             ga.setIteracionesSinMejora(iteracionesSinMejora);
             ga.setSemilla(2533 + i);
-            ga.setBusquedaLocal(operadorLocal, usarBL);
+            ga.setBusquedaLocal(operadorLocal, usarBL ? "mejor" : "ninguno");
 
             Individuo mejor = ga.ejecutar();
             Solucion solucion = new Solucion(mejor.getRutas(), mejor.getFuncionObjetivo());

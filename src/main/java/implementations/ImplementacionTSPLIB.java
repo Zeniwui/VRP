@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ImplementacionTSPLIB {
-    public void implementar(String instancia, int semilla, int numPermutaciones) {
+    public void implementar(String instancia, int semilla, int numPermutaciones, int iteracionesSinMejora, double probCruce, String tipoMutacion, double probMutacion, String estrategiaBL, double porcentajeBL) {
 
         CargadorArchivos.cargarDatos(instancia);
 
@@ -35,24 +35,31 @@ public class ImplementacionTSPLIB {
                 + "_GA_split_" + timestamp + ".csv");
         AlgoritmoGenetico ga1 = new AlgoritmoGenetico(generadorPermutaciones, split);
         ga1.setNumPoblacion(100);
-        ga1.setIteracionesSinMejora(15);
+        ga1.setIteracionesSinMejora(iteracionesSinMejora);
+        ga1.setProbCruce(probCruce);
+        ga1.setTipoMutacion(tipoMutacion);
+        ga1.setProbMutacion(probMutacion);
         ga1.setSemilla(semilla);
-        ga1.setBusquedaLocal(null, false);
+        ga1.setBusquedaLocal(null, "ninguno");
         ga1.setExportadorCSV(csv1, instancia);
         ga1.ejecutar();*/
 
-/*        // --- Experimento 2: GA + Combinacion ---
+        // --- Experimento 2: GA + Combinacion ---
         System.out.println("=== EXPERIMENTO 2: GA + Combinacion ===");
         ExportadorCSV csv2 = new ExportadorCSV();
         csv2.setNombreArchivo("convergencia_" + instancia.replace(".vrp","").replace(".txt","")
                 + "_GA_Combinacion_" + timestamp + ".csv");
         AlgoritmoGenetico ga2 = new AlgoritmoGenetico(generadorPermutaciones, split);
         ga2.setNumPoblacion(100);
-        ga2.setIteracionesSinMejora(15);
+        ga2.setIteracionesSinMejora(iteracionesSinMejora);
+        ga2.setProbCruce(probCruce);
+        ga2.setTipoMutacion(tipoMutacion);
+        ga2.setProbMutacion(probMutacion);
         ga2.setSemilla(semilla);
-        ga2.setBusquedaLocal(combinacion, true);
+        ga2.setBusquedaLocal(combinacion, estrategiaBL);
+        ga2.setPorcentajeBL(porcentajeBL);
         ga2.setExportadorCSV(csv2, instancia);
-        ga2.ejecutar();*/
+        ga2.ejecutar();
 
 /*        // --- Experimento 3: Multi-start (100 iteraciones) + Combinacion ---
         System.out.println("=== EXPERIMENTO 3: MultiStart + Combinacion ===");
@@ -70,13 +77,17 @@ public class ImplementacionTSPLIB {
                 + "_GA_Combinacion_" + timestamp + ".csv");
         AlgoritmoGenetico ga2 = new AlgoritmoGenetico(generadorPermutaciones, split);
         ga2.setNumPoblacion(100);
-        ga2.setIteracionesSinMejora(15);
+        ga2.setIteracionesSinMejora(iteracionesSinMejora);
+        ga2.setProbCruce(probCruce);
+        ga2.setTipoMutacion(tipoMutacion);
+        ga2.setProbMutacion(probMutacion);
         ga2.setSemilla(semilla);
-        ga2.setBusquedaLocal(operadorSwap, true);
+        ga2.setBusquedaLocal(operadorSwap, estrategiaBL);
+        ga2.setPorcentajeBL(porcentajeBL);
         ga2.setExportadorCSV(csv2, instancia);
         ga2.ejecutar();*/
 
-        // --- Experimento 5: GA + Combinacion (30 repeticiones) ---
+/*        // --- Experimento 5: GA + Combinacion (30 repeticiones) ---
         System.out.println("=== EXPERIMENTO 5: GA + Combinacion (30 repeticiones) ===");
         Experimentador experimentador = new Experimentador();
         experimentador.ejecutarExperimentoGeneticoConCSV(
@@ -86,7 +97,7 @@ public class ImplementacionTSPLIB {
                 combinacion,
                 30,
                 100,
-                15,
-                instancia);
+                iteracionesSinMejora,
+                instancia);*/
     }
 }

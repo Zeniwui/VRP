@@ -25,18 +25,18 @@ public class AlgoritmoGenetico {
     private GeneradorPermutacion generador;
     private Split split;
     private OperadorLocal operadorLocal = null;
-    private boolean usarBusquedaLocal = false;
+    private String estrategiaBL = "mejor";
+    private double porcentajeBL = 0.5;
     private ExportadorCSV exportadorCSV;
     private String nombreInstanciaCSV;
 
-    private int numPoblacion = 100;
-    private int semilla = 2533;
+    private int numPoblacion;
+    private int semilla;
     private double probCruce = 1;
     private double probMutacion = 0.05;
+    private String tipoMutacion = "swap";
     private Individuo mejorSolucionGlobal;
-    private int iteracionesSinMejora = 15;
-
-    private int maxGeneraciones = 500;
+    private int iteracionesSinMejora;
 
     private Random random = new Random(semilla);
 
@@ -53,23 +53,32 @@ public class AlgoritmoGenetico {
         // Hallamos cual es el mejor individuo del array de padres
         mejorSolucionGlobal = Collections.min(padres, Comparator.comparingDouble(Individuo::getFuncionObjetivo));
 
-        String opNombre = usarBusquedaLocal && operadorLocal != null
+        String opNombre = operadorLocal != null && !"ninguno".equals(estrategiaBL)
                 ? operadorLocal.getNombre() : "split";
         if (exportadorCSV != null) {
+            double promedioInicial = padres.stream()
+                    .mapToDouble(Individuo::getFuncionObjetivo)
+                    .average()
+                    .orElse(0.0);
             exportadorCSV.registrar(0, 0.0, mejorSolucionGlobal.getFuncionObjetivo(),
-                    opNombre, nombreInstanciaCSV, mejorSolucionGlobal.getRutas().toString(), true);
+                    promedioInicial, "GOX", probCruce, tipoMutacion, probMutacion,
+                    iteracionesSinMejora, estrategiaBL, porcentajeBL,
+                    opNombre, nombreInstanciaCSV,
+                    mejorSolucionGlobal.getRutas().toString(), true);
         }
 
         int contadorSinMejora = 0;
         int numGeneracion = 0;
 
         // Comenzamos bucle
-        while (contadorSinMejora < iteracionesSinMejora && numGeneracion < maxGeneraciones) {
+        while (contadorSinMejora < iteracionesSinMejora) {
             numGeneracion++;
 
+            // SELECCION
             // Elegimos pares
             elegirPares();
 
+            // CRUCE
             // Hacemos los cruces entre los pares y los guardamos en el array de hijos
             for (int i = 0; i < hijos.size(); i += 2) {
                 // Usamos la probabilidad marcada de antemano
@@ -78,25 +87,63 @@ public class AlgoritmoGenetico {
                 }
             }
 
+            // MUTACION
             // Hacemos mutaciones de los hijos
             for (int i = 0; i < hijos.size(); i++) {
                 // Solo hacemos mutacion de acuerdo a la probabilidad de mutacion
                 if (random.nextDouble() < probMutacion) {
-                    mutacionSwap(hijos.get(i), i);
+                    if ("inversion".equals(tipoMutacion)) {
+                        mutacionInversion(hijos.get(i), i);
+                    } else {
+                        mutacionSwap(hijos.get(i), i);
+                    }
                 }
             }
 
-            // Evaluamos las permutaciones de los hijos que han salido
-            // Utilizamos split + busqueda local (si esta activada)
+            // EVALUACION
+            // Split a todos los hijos
             for (Individuo hijo: hijos) {
                 Solucion solucion = split.generarCortes(hijo.getPermutacion());
-                if (usarBusquedaLocal && operadorLocal != null) {
-                    solucion = operadorLocal.generarMinimoTodosSegmentos(solucion);
-                }
                 hijo.setFuncionObjetivo(solucion.getCosto());
                 hijo.setRutas(solucion.getRuta());
             }
 
+            // Busqueda local segun estrategia
+            if (operadorLocal != null && !"ninguno".equals(estrategiaBL)) {
+                if ("todos".equals(estrategiaBL)) {
+                    for (Individuo hijo : hijos) {
+                        Solucion solucion = operadorLocal.generarMinimoTodosSegmentos(
+                                new Solucion(hijo.getRutas(), hijo.getFuncionObjetivo()));
+                        hijo.setFuncionObjetivo(solucion.getCosto());
+                        hijo.setRutas(solucion.getRuta());
+                    }
+                } else if ("porcentaje".equals(estrategiaBL)) {
+                    List<Integer> indices = new ArrayList<>();
+                    for (int k = 0; k < hijos.size(); k++) indices.add(k);
+                    Collections.shuffle(indices, random);
+                    int numBL = (int) Math.ceil(porcentajeBL * hijos.size());
+                    for (int k = 0; k < numBL; k++) {
+                        Individuo hijo = hijos.get(indices.get(k));
+                        Solucion solucion = operadorLocal.generarMinimoTodosSegmentos(
+                                new Solucion(hijo.getRutas(), hijo.getFuncionObjetivo()));
+                        hijo.setFuncionObjetivo(solucion.getCosto());
+                        hijo.setRutas(solucion.getRuta());
+                    }
+                } else {
+                    // "mejor" (default) — BL solo al mejor entre padres e hijos
+                    List<Individuo> todos = new ArrayList<>(padres);
+                    todos.addAll(hijos);
+                    Individuo mejor = Collections.min(todos,
+                            Comparator.comparingDouble(Individuo::getFuncionObjetivo));
+
+                    Solucion solucion = operadorLocal.generarMinimoTodosSegmentos(
+                            new Solucion(mejor.getRutas(), mejor.getFuncionObjetivo()));
+                    mejor.setFuncionObjetivo(solucion.getCosto());
+                    mejor.setRutas(solucion.getRuta());
+                }
+            }
+
+            // REEMPLAZO
             // Hacemos reemplazo mediante torneo 2/4. Comparamos 2 padres y 2 hijos y nos quedamos con los 2 mejores
             for (int i = 0; i < padres.size(); i += 2) {
                 List<Individuo> candidatos = new ArrayList<>();
@@ -110,6 +157,11 @@ public class AlgoritmoGenetico {
                 padres.set(i, candidatos.get(0));
                 padres.set(i+1, candidatos.get(1));
             }
+
+            double promedioPadres = padres.stream()
+                    .mapToDouble(Individuo::getFuncionObjetivo)
+                    .average()
+                    .orElse(0.0);
 
             // Ahora tenemos que ver si ha habido mejora
             // Obtenemos el mejor individuo de la nueva ronda de padres
@@ -127,7 +179,10 @@ public class AlgoritmoGenetico {
             if (exportadorCSV != null) {
                 double tiempo = (System.nanoTime() - inicio) / 1_000.0;
                 exportadorCSV.registrar(numGeneracion, tiempo, mejorSolucionGlobal.getFuncionObjetivo(),
-                        opNombre, nombreInstanciaCSV, mejorSolucionGlobal.getRutas().toString(), true);
+                        promedioPadres, "GOX", probCruce, tipoMutacion, probMutacion,
+                        iteracionesSinMejora, estrategiaBL, porcentajeBL,
+                        opNombre, nombreInstanciaCSV,
+                        mejorSolucionGlobal.getRutas().toString(), true);
             }
 
         }
@@ -268,14 +323,51 @@ public class AlgoritmoGenetico {
 
     }
 
+    // Mutacion de inversion. Se eligen dos posiciones al azar y se invierte ese subsegmento
+    private void mutacionInversion(Individuo hijo, int indice) {
+        List<Integer> permHijo = hijo.getPermutacion();
+
+        // Se eligen dos posiciones aleatorias
+        int posicion1 = random.nextInt(permHijo.size());
+        int posicion2 = random.nextInt(permHijo.size());
+        while (posicion1 == posicion2) {
+            posicion1 = random.nextInt(permHijo.size());
+        }
+
+        // Asegurar que posicion1 < posicion2
+        if (posicion1 > posicion2) {
+            int aux = posicion1;
+            posicion1 = posicion2;
+            posicion2 = aux;
+        }
+
+        // Invertir el subsegmento entre posicion1 y posicion2
+        List<Integer> nuevaPerm = new ArrayList<>(permHijo);
+        while (posicion1 < posicion2) {
+            int aux = nuevaPerm.get(posicion1);
+            nuevaPerm.set(posicion1, nuevaPerm.get(posicion2));
+            nuevaPerm.set(posicion2, aux);
+            posicion1++;
+            posicion2--;
+        }
+
+        hijos.set(indice, new Individuo(nuevaPerm));
+    }
+
     public void setNumPoblacion(int numPoblacion) {
         this.numPoblacion = numPoblacion;
     }
     public void setIteracionesSinMejora(int iteracionesSinMejora) {
         this.iteracionesSinMejora = iteracionesSinMejora;
     }
-    public void setMaxGeneraciones(int maxGeneraciones) {
-        this.maxGeneraciones = maxGeneraciones;
+    public void setProbCruce(double probCruce) {
+        this.probCruce = probCruce;
+    }
+    public void setProbMutacion(double probMutacion) {
+        this.probMutacion = probMutacion;
+    }
+    public void setTipoMutacion(String tipoMutacion) {
+        this.tipoMutacion = tipoMutacion;
     }
 
     public void setSemilla(int semilla) {
@@ -288,13 +380,17 @@ public class AlgoritmoGenetico {
         this.nombreInstanciaCSV = instancia;
     }
 
-    public void setBusquedaLocal(OperadorLocal operador, boolean activar) {
+    public void setBusquedaLocal(OperadorLocal operador, String estrategiaBL) {
         this.operadorLocal = operador;
-        this.usarBusquedaLocal = activar;
+        this.estrategiaBL = estrategiaBL;
+    }
+
+    public void setPorcentajeBL(double porcentajeBL) {
+        this.porcentajeBL = porcentajeBL;
     }
 
     public String getNombreOperadorLocal() {
-        if (usarBusquedaLocal && operadorLocal != null) {
+        if (operadorLocal != null && !"ninguno".equals(estrategiaBL)) {
             return operadorLocal.getNombre();
         }
         return "sinBL";

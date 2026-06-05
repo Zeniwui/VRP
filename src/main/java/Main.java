@@ -12,16 +12,21 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length < 1) {
-            System.err.println("Uso: java -jar VRP.jar <archivo_instancia>");
+        if (args.length < 6) {
+            System.err.println("Uso: java -jar VRP.jar <archivo_instancia> <iteracionesSinMejora> <probCruce> <tipoMutacion> <probMutacion> <estrategiaBL> [porcentajeBL]");
             System.exit(1);
         }
 
         String instancia = args[0];
-//        String instancia = "CMT5.vrp";
+        int iteracionesSinMejora = Integer.parseInt(args[1]);
+        double probCruce = Double.parseDouble(args[2]);
+        String tipoMutacion = args[3];
+        double probMutacion = Double.parseDouble(args[4]);
+        String estrategiaBL = args[5];
+        double porcentajeBL = args.length >= 7 ? Double.parseDouble(args[6]) : 0.5;
 
         ImplementacionTSPLIB tsplib = new ImplementacionTSPLIB();
-        tsplib.implementar(instancia, SEMILLA, NUM_PERMUTACIONES);
+        tsplib.implementar(instancia, SEMILLA, NUM_PERMUTACIONES, iteracionesSinMejora, probCruce, tipoMutacion, probMutacion, estrategiaBL, porcentajeBL);
 
     }
 }

@@ -21,7 +21,6 @@ public class Combinacion implements OperadorLocal {
     private String instancia;
     private String permutacion;
     private boolean conSplit;
-    private int maxIteraciones = 500;
 
     public Combinacion(Operador2Opt op1, OperadorOrOpt op2, OperadorSwap op3, Evaluador ev) {
         operador2Opt = op1;
@@ -52,7 +51,7 @@ public class Combinacion implements OperadorLocal {
         Solucion solucionActual = new Solucion(solucionInicial);
         boolean hayMejora = true;
 
-        while (hayMejora && iteracion < maxIteraciones) {
+        while (hayMejora) {
             hayMejora = false;
 
             Solucion mejor2Opt = vecinos2Opt(solucionActual);
@@ -203,11 +202,6 @@ public class Combinacion implements OperadorLocal {
     @Override
     public Solucion generarMinimoLocal(Solucion solucionInicial) {
         return null;
-    }
-
-
-    public void setMaxIteraciones(int maxIteraciones) {
-        this.maxIteraciones = maxIteraciones;
     }
 
     @Override

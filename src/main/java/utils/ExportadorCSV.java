@@ -16,7 +16,21 @@ public class ExportadorCSV {
     private String nombreArchivo;
 
     public void registrar(int iteracion, double tiempoMs, double coste, String operador, String instancia, String rutaActual, boolean conSplit) {
-        registros.add(new RegistroCSV(iteracion, tiempoMs, coste, operador, instancia, rutaActual, conSplit));
+        registros.add(new RegistroCSV(iteracion, tiempoMs, coste, 0.0, "", 0.0, "", 0.0, 0, "", 0.0, operador, instancia, rutaActual, conSplit));
+    }
+
+    public void registrar(int iteracion, double tiempoMs, double coste, double promedioPadres, String operador, String instancia, String rutaActual, boolean conSplit) {
+        registros.add(new RegistroCSV(iteracion, tiempoMs, coste, promedioPadres, "", 0.0, "", 0.0, 0, "", 0.0, operador, instancia, rutaActual, conSplit));
+    }
+
+    public void registrar(int iteracion, double tiempoMs, double coste, double promedioPadres,
+                          String tipoCruce, double probCruce, String tipoMutacion, double probMutacion,
+                          int iteracionesSinMejora, String estrategiaBL, double porcentajeBL,
+                          String operador, String instancia, String rutaActual, boolean conSplit) {
+        registros.add(new RegistroCSV(iteracion, tiempoMs, coste, promedioPadres,
+                tipoCruce, probCruce, tipoMutacion, probMutacion,
+                iteracionesSinMejora, estrategiaBL, porcentajeBL,
+                operador, instancia, rutaActual, conSplit));
     }
 
     public void setNombreArchivo(String nombre) {
@@ -46,14 +60,22 @@ public class ExportadorCSV {
 
         Path filePath = dir.resolve(nombreArchivo);
         try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
-            writer.write("iteracion,tiempo_us,coste,operador,instancia,ruta_actual,conSplit");
+            writer.write("iteracion,tiempo_us,coste,promedio_padres,cruce,prob_cruce,mutacion,prob_mutacion,iteraciones_sin_mejora,estrategia_bl,porcentaje_bl,operador,instancia,ruta_actual,conSplit");
             writer.newLine();
             for (RegistroCSV r : registros) {
                 String rutaEscapada = "\"" + r.getRutaActual() + "\"";
-                writer.write(String.format(Locale.US, "%d,%.0f,%.0f,%s,%s,%s,%b",
+                writer.write(String.format(Locale.US, "%d,%.0f,%.0f,%.0f,%s,%.2f,%s,%.2f,%d,%s,%.2f,%s,%s,%s,%b",
                     r.getIteracion(),
                     r.getTiempoUs(),
                     r.getCoste(),
+                    r.getPromedioPadres(),
+                    r.getTipoCruce(),
+                    r.getProbCruce(),
+                    r.getTipoMutacion(),
+                    r.getProbMutacion(),
+                    r.getIteracionesSinMejora(),
+                    r.getEstrategiaBL(),
+                    r.getPorcentajeBL(),
                     r.getOperador(),
                     r.getInstancia(),
                     rutaEscapada,
