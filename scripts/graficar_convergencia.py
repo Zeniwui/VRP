@@ -11,6 +11,8 @@ OPTIMOS = {
     "CMT3": 826.14,
     "CMT4": 1028.42,
     "CMT5": 1291.29,
+    "CMT6": 555.43,
+    "CMT7": 909.675
 }
 
 ALIAS_ALGORITMOS = {

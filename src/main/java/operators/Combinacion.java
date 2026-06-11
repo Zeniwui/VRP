@@ -35,9 +35,17 @@ public class Combinacion implements OperadorLocal {
         this.instancia = instancia;
         this.permutacion = permutacion;
         this.conSplit = conSplit;
+        operador2Opt.setExportador(exportador, instancia, permutacion, conSplit);
+        operadorOrOpt.setExportador(exportador, instancia, permutacion, conSplit);
+        operadorSwap.setExportador(exportador, instancia, permutacion, conSplit);
     }
 
+    @Override
     public Solucion generarMinimoTodosSegmentos(Solucion solucionInicial) {
+        return generarMinimoSteepestDescentCombinado(solucionInicial);
+    }
+
+    public Solucion generarMinimoSteepestDescentCombinado(Solucion solucionInicial) {
         long inicio = System.nanoTime();
         int iteracion = 0;
         int contador2Opt = 0;
@@ -45,7 +53,7 @@ public class Combinacion implements OperadorLocal {
         int contadorSwap = 0;
 
         if (exportador != null) {
-            exportador.registrar(iteracion, 0.0, solucionInicial.getCosto(), "Combinacion", instancia, solucionInicial.getRuta().toString(), conSplit);
+            exportador.registrar(iteracion, 0.0, solucionInicial.getCosto(), "SteepestDescentCombinado", instancia, solucionInicial.getRuta().toString(), conSplit);
         }
 
         Solucion solucionActual = new Solucion(solucionInicial);
@@ -91,6 +99,56 @@ public class Combinacion implements OperadorLocal {
                     double tiempo = (System.nanoTime() - inicio) / 1_000.0;
                     exportador.registrar(iteracion, tiempo, mejorCosto, operadorGanador, instancia, solucionActual.getRuta().toString(), conSplit);
                 }
+            }
+        }
+
+        return solucionActual;
+    }
+
+    public Solucion generarMinimoVND(Solucion solucionInicial) {
+        long inicio = System.nanoTime();
+        int iteracion = 0;
+        int contador2Opt = 0;
+        int contadorOrOpt = 0;
+        int contadorSwap = 0;
+
+        if (exportador != null) {
+            exportador.registrar(iteracion, 0.0, solucionInicial.getCosto(), "VND", instancia, solucionInicial.getRuta().toString(), conSplit);
+        }
+
+        Solucion solucionActual = new Solucion(solucionInicial);
+        int k = 0;
+
+        while (k < 3) {
+            Solucion mejorada;
+            String operadorUsado;
+
+            if (k == 0) {
+                mejorada = operador2Opt.generarMinimoTodosSegmentos(solucionActual);
+                operadorUsado = "2-opt";
+            } else if (k == 1) {
+                mejorada = operadorOrOpt.generarMinimoTodosSegmentos(solucionActual);
+                operadorUsado = "or-opt";
+            } else {
+                mejorada = operadorSwap.generarMinimoTodosSegmentos(solucionActual);
+                operadorUsado = "swap";
+            }
+
+            if (mejorada.getCosto() < solucionActual.getCosto()) {
+                solucionActual = mejorada;
+                k = 0;
+                iteracion++;
+                switch (operadorUsado) {
+                    case "2-opt": contador2Opt++; break;
+                    case "or-opt": contadorOrOpt++; break;
+                    case "swap": contadorSwap++; break;
+                }
+                if (exportador != null) {
+                    double tiempo = (System.nanoTime() - inicio) / 1_000.0;
+                    exportador.registrar(iteracion, tiempo, solucionActual.getCosto(), operadorUsado, instancia, solucionActual.getRuta().toString(), conSplit);
+                }
+            } else {
+                k++;
             }
         }
 

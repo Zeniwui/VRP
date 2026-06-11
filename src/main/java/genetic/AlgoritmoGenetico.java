@@ -118,10 +118,17 @@ public class AlgoritmoGenetico {
                         hijo.setRutas(solucion.getRuta());
                     }
                 } else if ("porcentaje".equals(estrategiaBL)) {
+                    // Generar lista de índices [0, 1, 2, ..., hijos.size()-1]
                     List<Integer> indices = new ArrayList<>();
                     for (int k = 0; k < hijos.size(); k++) indices.add(k);
+
+                    // Barajar los índices aleatoriamente
                     Collections.shuffle(indices, random);
+
+                    // Calcular cuántos hijos aplicarle BL
                     int numBL = (int) Math.ceil(porcentajeBL * hijos.size());
+
+                    // Aplicar BL solo a los primeros `numBL` hijos del orden barajado
                     for (int k = 0; k < numBL; k++) {
                         Individuo hijo = hijos.get(indices.get(k));
                         Solucion solucion = operadorLocal.generarMinimoTodosSegmentos(
